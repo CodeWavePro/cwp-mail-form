@@ -1,0 +1,22 @@
+$brand: #58c800;
+$white: #f9f9f9;
+$text: #323232;
+
+.cwp-form {
+	z-index: 1;
+	position: absolute;
+	top: 400px;
+	right: 50%;
+	margin-right: -570px;
+	width: 300px;
+	background-color: transparent
+}
+
+.cwp-legend {
+	font-family: 'Fira Sans';
+	color: $white;
+	font-size: 21px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-bottom: 15px
+}
