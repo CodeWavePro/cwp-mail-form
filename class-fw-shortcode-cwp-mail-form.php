@@ -236,7 +236,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		$phone_valid = array( true, '' );
 		$message_valid = array( true, '' );
 
-		if ( $send ) {	// If all is OK :)
+		if ( $send ) {	// If e-mail send is OK.
 			wp_send_json_success(
 				array(
 					'firstname' 	=> $firstname_valid,
@@ -245,7 +245,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 					'message'	 	=> esc_html__( 'Спасибо за Ваше сообщение. Мы постараемся ответить Вам в кратчайшие сроки.', 'mebel-laim' )
 				)
 			);
-		}	else {	// If is not OK :(
+		}	else {	// If e-mail send is not OK.
 			wp_send_json_error(
 				array(
 					'firstname' 	=> $firstname_valid,

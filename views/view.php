@@ -39,7 +39,7 @@ $button_text = ( isset( $atts['button_text'] ) && $atts['button_text'] ) ? $atts
 
 		<!-- Label for user message. -->
 		<label class = "cwpmf-label" for = "cwpmf-input-message">
-			<textarea id = "cwpmf-input-message" class = "textarea" name = "cwpmf-input-message" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $message_placeholder ) ?>"></textarea>
+			<textarea id = "cwpmf-input-message" class = "cwpmf-textarea" name = "cwpmf-input-message" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $message_placeholder ) ?>"></textarea>
 			<!-- Hidden field to show error if it occured. -->
 			<span class = "cwpmf-input-error cwpmf-input__message">
 				<span class = "cwpmf-input-error-msg"></span>
@@ -47,7 +47,7 @@ $button_text = ( isset( $atts['button_text'] ) && $atts['button_text'] ) ? $atts
 		</label>
 
 		<!-- Button to submit form. -->
-		<button class = "cwpmf-button" title = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $button_text ) ?>" form = "cwpmf" type = "submit">
+		<button class = "button cwpmf-button" title = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $button_text ) ?>" form = "cwpmf" type = "submit">
 			<?php printf( esc_html__( '%s', 'mebel-laim' ), $button_text ) ?>
 		</button>
 	</fieldset>

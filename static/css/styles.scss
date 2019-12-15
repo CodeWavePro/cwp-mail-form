@@ -1,16 +1,103 @@
+// Colors variables.
 $brand: #58c800;
 $white: #f9f9f9;
 $text: #323232;
+$error: #ff3e3e;
 
-.cwpmf {
-	background-color: transparent
+/**
+ * Short transition writing.
+ * @param $time is for seconds or miliseconds.
+ * Example: @include transition(300ms).
+ */
+@mixin transition($time) {
+    transition: all ease-in-out $time
 }
 
+// Label.
+.cwpmf-label {
+    position: relative;
+    width: 100%;
+    margin-bottom: 32px;
+
+    &:last-of-type {
+        margin-bottom: 50px
+    }
+}
+
+// Inputs and textareas.
+.cwpmf-input[type='text'],
+.cwpmf-textarea {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #b5b5b5;
+    font-family: 'PT Sans';
+    width: 100%;
+    height: 24px;
+    line-height: 19px;
+    border-radius: 0;
+    @include transition(300ms);
+
+    &:focus,
+    &:active {
+        border-color: $brand;
+        color: $brand
+    }
+
+    // Placeholders.
+    &::placeholder {
+        color: #b5b5b5;
+        opacity: 1;
+        font-family: 'PT Sans'
+    }
+
+    &:focus::-webkit-input-placeholder {
+        color: transparent
+    }
+
+    &:focus:-moz-placeholder {
+        color: transparent
+    } /* FF 4-18 */
+
+    &:focus::-moz-placeholder {
+        color: transparent
+    } /* FF 19+ */
+
+    &:focus:-ms-input-placeholder {
+        color: transparent
+    } /* IE 10+ */
+}
+
+// Textarea height.
+.cwpmf-textarea {
+	height: 60px
+}
+
+// If field has error, this class is added.
+.cwpmf-field-with-error {
+	border-color: $error !important
+}
+
+// Main e-mail form styles.
+.cwpmf {
+	background-color: transparent;
+	margin-top: 30px
+}
+
+// Form legend.
 .cwpmf-legend {
 	font-family: 'Fira Sans';
-	color: $white;
-	font-size: 21px;
+	font-size: 18px;
 	font-weight: bold;
 	text-transform: uppercase;
-	margin-bottom: 15px
+	margin-bottom: 25px
+}
+
+// Hidden field for error message under inputs and textareas.
+.cwpmf-input-error {
+    position: absolute;
+    bottom: -21px;
+    left: 0px;
+    font-size: 13px;
+    line-height: 17px;
+    color: $error
 }
