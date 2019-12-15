@@ -13,7 +13,7 @@ $button_text = ( isset( $atts['button_text'] ) && $atts['button_text'] ) ? $atts
 ?>
 
 <!-- Form to send e-mail. -->
-<form id = "cwpmf" class = "cwpmf" method = "POST">
+<form id = "cwpmf" class = "cwpmf" method = "POST" data-to = "<?php echo esc_attr( $email_to ) ?>">
 	<!-- All form fields. -->
 	<fieldset class = "cwpmf-fieldset">
 		<!-- Form title text. -->
