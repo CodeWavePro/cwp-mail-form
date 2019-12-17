@@ -242,7 +242,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 					'firstname' 	=> $firstname_valid,
 					'phone' 		=> $phone_valid,
 					'textarea'		=> $message_valid,
-					'message'	 	=> esc_html__( 'Спасибо за Ваше сообщение. Мы постараемся ответить Вам в кратчайшие сроки.', 'mebel-laim' )
+					'message'	 	=> sprintf( esc_html__( 'Спасибо за Ваше сообщение, %s. Мы постараемся ответить Вам в кратчайшие сроки.', 'mebel-laim' ), $firstname )
 				)
 			);
 		}	else {	// If e-mail send is not OK.

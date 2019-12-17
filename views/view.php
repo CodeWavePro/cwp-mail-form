@@ -52,3 +52,23 @@ $button_text = ( isset( $atts['button_text'] ) && $atts['button_text'] ) ? $atts
 		</button>
 	</fieldset>
 </form>
+
+<!-- Hidden popup for displaying success|error messages after sending e-mail. -->
+<div class = "cwpmf-popup animated">
+	<!-- Popup inner for message and button. -->
+	<div class = "cwpmf-popup-inner animated">
+		<!-- Close popup button. -->
+		<a href = "#" class = "cwpmf-popup__close" title = "<?php esc_attr_e( 'Закрыть окно', 'mebel-laim' ) ?>">
+			<span class = "cwpmf-popup__line"></span>
+			<span class = "cwpmf-popup__line cwpmf-popup__line_cross"></span>
+		</a>
+		<!-- Popup message wrapper. Text will be sent from scripts.js. -->
+		<div class = "cwpmf-popup-message"></div>
+		<!-- Popup button for better UI, I think. -->
+		<div class = "cwpmf-popup-button">
+			<a class = "button cwpmf-popup-button__link" href = "#">
+				<?php esc_html_e( 'OK', 'mebel-laim' ) ?>
+			</a>
+		</div>
+	</div>
+</div>

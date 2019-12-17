@@ -101,3 +101,82 @@ $error: #ff3e3e;
     line-height: 17px;
     color: $error
 }
+
+.cwpmf-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 51
+}
+
+.cwpmf-popup-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    min-height: 250px;
+    margin-top: -125px;
+    margin-left: -250px;
+    background-color: $white;
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.15);
+    padding: 75px 35px 50px;
+    text-align: center
+}
+
+// Close popup cross button.
+.cwpmf-popup__close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    transform: rotate(45deg);
+    @include transition(300ms);
+    z-index: 1;
+
+    &:hover {
+        background-color: $brand;
+
+        .cwpmf-popup__line {
+            background-color: $white
+        }
+    }
+}
+
+// Close popup line (horizontal part of the cross).
+.cwpmf-popup__line {
+    display: block;
+    width: 30px;
+    height: 2px;
+    background-color: $brand;
+    @include transition(300ms)
+}
+
+// Close popup line (2-nd line, 90 degrees rotate to make cross).
+.cwpmf-popup__line_cross {
+    transform: rotate(90deg);
+    margin-top: -2px
+}
+
+// Message block in popup.
+.cwpmf-popup-message {
+    font-size: 21px;
+    font-family: 'Fira Sans'
+}
+
+// Button in popup.
+.cwpmf-popup-button {
+    position: absolute;
+    bottom: 35px;
+    left: 0;
+    width: 100%
+}

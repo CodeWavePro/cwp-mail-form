@@ -45,7 +45,15 @@ jQuery( function( $ ) {
 				$.post( cwpAjax.ajaxurl, ajaxData, function( data ) {	// Ajax post request.
 					switch ( data.success ) {	// Checking ajax response.
 						case true: 	// If ajax response is success.
-							console.log( data.data.message );	// Show success message in console.
+							$( '.cwpmf-popup-message' ).html( data.data.message );	// Put success message to its wrapper in popup.
+							$( '.cwpmf-popup' ).css( 'display', 'block' );	// Show wrapper for success message. 
+							// 1ms timeout to show animation after it. Needed because of "display none - display block" changing.
+							setTimeout(
+								function() {
+									$( '.cwpmf-popup' ).removeClass( 'fadeOut' ).addClass( 'fadeIn' );	// Animate wrapper for success message.
+									$( '.cwpmf-popup-inner' ).removeClass( 'bounceOutUp' ).addClass( 'jackInTheBox' );	// Animate popup inner for success message.
+								}, 1
+							);
 							$( 'input, textarea', form ).attr( 'value', '' );	// Clear all fields.
 							isActiveAjax = false;	// User can use ajax ahead.
 			    			break;
@@ -84,6 +92,26 @@ jQuery( function( $ ) {
 				} );
 			}
 		} );
+
+		/**
+		 *	Popup message close.
+		 */
+		$( 'body' ).on(
+			'click',
+			'.cwpmf-popup__close, .cwpmf-popup-button__link',
+			function( e ) {
+				e.preventDefault();
+				$( '.cwpmf-popup-inner' ).removeClass( 'jackInTheBox' ).addClass( 'bounceOutUp' );	// Animate popup inner before hiding.
+				$( '.cwpmf-popup' ).removeClass( 'fadeIn' ).addClass( 'fadeOut' );	// Animate wrapper for success message before hiding.
+				// 1s timeout to play exiting animation.
+				setTimeout(
+					function() {
+						$( '.cwpmf-popup' ).css( 'display', 'none' );	// Hide wrapper for success message. 
+						$( '.cwpmf-popup-message' ).html( '' );	// Clear message field in popup.
+					}, 1000
+				);
+			}
+		);
 	} );
 
 } );
