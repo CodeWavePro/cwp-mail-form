@@ -74,6 +74,7 @@ jQuery( function( $ ) {
 							// 1ms timeout to show animation after it. Needed because of "display none - display block" changing.
 							setTimeout(
 								function() {
+									$( '.cwpmf-popup' ).css( 'z-index', '51' );
 									$( '.cwpmf-popup' ).removeClass( 'fadeOut' ).addClass( 'fadeIn' );	// Animate wrapper for success message.
 									$( '.cwpmf-popup-inner' ).removeClass( 'bounceOutUp' ).addClass( 'jackInTheBox' );	// Animate popup inner for success message.
 								}, 1
@@ -140,6 +141,7 @@ jQuery( function( $ ) {
 					function() {
 						$( '.cwpmf-popup' ).css( 'display', 'none' );	// Hide wrapper for success message. 
 						$( '.cwpmf-popup-message' ).html( '' );	// Clear message field in popup.
+						$( '.cwpmf-popup' ).css( 'z-index', '-1' );
 					}, 1000
 				);
 			}
