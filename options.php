@@ -95,6 +95,46 @@ $options = [
         'show_borders'  => false
     ],
 
+    'is_email_field'   => [
+        'type'  => 'multi-picker',
+        'label' => false,
+        'desc'  => false,
+        'value' => [
+            'email_choice'  => 'email_true'
+        ],
+
+        'picker'    => [
+            'email_choice'  => [
+                'type'      => 'select',
+                'label'     => esc_html__( 'E-mail Field', 'mebel-laim' ),
+                'desc'      => esc_html__( 'Please choose if form will have e-mail field', 'mebel-laim' ),
+                'choices'   => [
+                    'email_true'    => esc_html__( 'Show E-mail Field', 'mebel-laim' ),
+                    'email_false'   => esc_html__( 'Hide E-mail Field', 'mebel-laim')
+                ]
+            ]
+        ],
+
+        'choices'   => [
+            'email_true'    => [
+                'email_placeholder'   => [
+                    'type'  => 'text',
+                    'label' => esc_html__( 'E-mail Placeholder', 'mebel-laim' ),
+                    'desc'  => esc_html__( 'Please enter e-mail field placeholder text', 'mebel-laim' )
+                ],
+
+                'email_icon'  => [
+                    'type'          => 'icon-v2',
+                    'label'         => esc_html__( 'E-mail Icon', 'mebel-laim' ),
+                    'desc'          => esc_html__( 'Please choose e-mail field icon', 'mebel-laim' ),
+                    'preview_size'  => 'medium',
+                    'modal_size'    => 'medium'
+                ]
+            ]
+        ],
+        'show_borders'  => false
+    ],
+
     'is_message_field'   => [
         'type'  => 'multi-picker',
         'label' => false,

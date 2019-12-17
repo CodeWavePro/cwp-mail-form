@@ -47,6 +47,24 @@ switch ( $atts['is_phone_field']['phone_choice'] ) {
 		break;
 }
 
+// Check is e-mail field set to 'Show' or 'Hide' in options.php.
+switch ( $atts['is_email_field']['email_choice'] ) {
+	case 'email_true':
+		$email_placeholder = ( isset( $atts['is_email_field']['email_true']['email_placeholder'] ) &&
+							   $atts['is_email_field']['email_true']['email_placeholder'] ) ?
+							   $atts['is_email_field']['email_true']['email_placeholder'] :
+							   'Почта';
+		$email_icon = ( isset( $atts['is_email_field']['email_true']['email_icon'] ) &&
+								   $atts['is_email_field']['email_true']['email_icon'] ) ?
+								   $atts['is_email_field']['email_true']['email_icon']['icon-class'] :
+								   'fas fa-question';
+		break;
+
+	case 'phone_false':
+		$email_placeholder = '';
+		break;
+}
+
 // Check is message field set to 'Show' or 'Hide' in options.php.
 switch ( $atts['is_message_field']['message_choice'] ) {
 	case 'message_true':
@@ -78,7 +96,7 @@ switch ( $atts['is_message_field']['message_choice'] ) {
 		<!-- If firstname field is set to 'Show', so placeholder is not empty. -->
 		<?php if ( !empty( $firstname_placeholder ) ) : ?>
 			<label class = "cwpmf-label" for = "cwpmf-input-firstname">
-				<input id = "cwpmf-input-firstname" class = "cwpmf-input" type = "text" name = "cwpmf-input-firstname" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $firstname_placeholder ) ?>" />
+				<input id = "cwpmf-input-firstname" class = "cwpmf-input cwpmf-input-firstname" type = "text" name = "cwpmf-input-firstname" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $firstname_placeholder ) ?>" />
 				<!-- Icon for this field. -->
 				<i class = "<?php echo esc_attr( $firstname_icon ) ?> cwpmf-icon"></i>
 
@@ -90,9 +108,9 @@ switch ( $atts['is_message_field']['message_choice'] ) {
 		<?php endif ?>
 
 		<!-- If phone field is set to 'Show', so placeholder is not empty. -->
-		<?php if ( !empty( $firstname_placeholder ) ) : ?>
+		<?php if ( !empty( $phone_placeholder ) ) : ?>
 			<label class = "cwpmf-label" for = "cwpmf-input-phone">
-				<input id = "cwpmf-input-phone" class = "cwpmf-input" type = "text" name = "cwpmf-input-phone" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $phone_placeholder ) ?>" />
+				<input id = "cwpmf-input-phone" class = "cwpmf-input cwpmf-input-phone" type = "text" name = "cwpmf-input-phone" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $phone_placeholder ) ?>" />
 				<!-- Icon for this field. -->
 				<i class = "<?php echo esc_attr( $phone_icon ) ?> cwpmf-icon"></i>
 
@@ -103,10 +121,24 @@ switch ( $atts['is_message_field']['message_choice'] ) {
 			</label>
 		<?php endif ?>
 
+		<!-- If e-mail field is set to 'Show', so placeholder is not empty. -->
+		<?php if ( !empty( $email_placeholder ) ) : ?>
+			<label class = "cwpmf-label" for = "cwpmf-input-email">
+				<input id = "cwpmf-input-email" class = "cwpmf-input cwpmf-input-email" type = "text" name = "cwpmf-input-email" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $email_placeholder ) ?>" />
+				<!-- Icon for this field. -->
+				<i class = "<?php echo esc_attr( $email_icon ) ?> cwpmf-icon"></i>
+
+				<!-- Hidden field to show error if it occured. -->
+				<span class = "cwpmf-input-error cwpmf-input__email">
+					<span class = "cwpmf-input-error-msg"></span>
+				</span>
+			</label>
+		<?php endif ?>
+
 		<!-- If message field is set to 'Show', so placeholder is not empty. -->
-		<?php if ( !empty( $firstname_placeholder ) ) : ?>
+		<?php if ( !empty( $message_placeholder ) ) : ?>
 			<label class = "cwpmf-label" for = "cwpmf-input-message">
-				<textarea id = "cwpmf-input-message" class = "cwpmf-textarea" name = "cwpmf-input-message" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $message_placeholder ) ?>"></textarea>
+				<textarea id = "cwpmf-input-message" class = "cwpmf-textarea cwpmf-input-message" name = "cwpmf-input-message" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $message_placeholder ) ?>"></textarea>
 				<!-- Icon for this field. -->
 				<i class = "<?php echo esc_attr( $message_icon ) ?> cwpmf-icon"></i>
 

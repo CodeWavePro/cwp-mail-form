@@ -6,6 +6,10 @@ jQuery( function( $ ) {
 	 */
 	$( document ).ready( function() {
 		var form, ajaxData, serial, emailTo;	// For e-mail form data sending.
+		var isFirstname = false, 
+			isPhone = false,
+			isMessage = false,
+			isEmail = false;	// Data-attribute if this fields are existing in form.
 
 		/**
 		 * Show more info about product.
@@ -33,13 +37,33 @@ jQuery( function( $ ) {
 							$( '.cwpmf-textarea', this ).removeClass( 'cwpmf-field-with-error' );	// Remove error class from this input field.
 							$( '.cwpmf-input-error-msg', this ).text( '' );	// Remove all error text.
 						}
+						// If firstname input exists.
+						if ( $( 'input', this ).hasClass( 'cwpmf-input-firstname' ) ) {
+							isFirstname = true;	// Set variable to true.
+						}
+						// If phone input exists.
+						if ( $( 'input', this ).hasClass( 'cwpmf-input-phone' ) ) {
+							isPhone = true;	// Set variable to true.
+						}
+						// If e-mail input exists.
+						if ( $( 'input', this ).hasClass( 'cwpmf-input-email' ) ) {
+							isEmail = true;	// Set variable to true.
+						}
+						// If message textarea exists.
+						if ( $( 'textarea', this ).hasClass( 'cwpmf-input-message' ) ) {
+							isMessage = true;	// Set variable to true.
+						}
 					}
 				);
 
 				ajaxData = {
-					action		: '_cwpmf_send_email',
-					serial 		: serial,
-					email_to	: emailTo
+					action			: '_cwpmf_send_email',
+					serial 			: serial,
+					email_to		: emailTo,
+					is_firstname 	: isFirstname,
+					is_phone 		: isPhone,
+					is_email 		: isEmail,
+					is_message 		: isMessage
 				};
 
 				$.post( cwpAjax.ajaxurl, ajaxData, function( data ) {	// Ajax post request.
@@ -61,21 +85,29 @@ jQuery( function( $ ) {
 						case false: 	// If we have some errors.
 			    			console.log( data.data.message );	// Show errors in console.
 
-		    				if ( data.data.firstname[0] === false ) {	// If error occured with name field.
+			    			// If error occured with name field.
+		    				if ( data.data.firstname[0] === false ) {
 		    					if ( $( 'span', form ).hasClass( 'cwpmf-input__firstname' ) ) {	// If form has input for name.
 		    						$( '.cwpmf-input__firstname' ).closest( '.cwpmf-label' ).find( 'input' ).addClass( 'cwpmf-field-with-error' );
 									$( '.cwpmf-input__firstname .cwpmf-input-error-msg', form ).text( data.data.firstname[1] );	// Show error message near field.
 								}
 							}
-
-							if ( data.data.phone[0] === false ) {	// If error occured with phone field.
+							// If error occured with phone field.
+							if ( data.data.phone[0] === false ) {
 			    				if ( $( 'span', form ).hasClass( 'cwpmf-input__phone' ) ) {	// If form has input for phone.
 			    					$( '.cwpmf-input__phone' ).closest( '.cwpmf-label' ).find( 'input' ).addClass( 'cwpmf-field-with-error' );
 									$( '.cwpmf-input__phone .cwpmf-input-error-msg', form ).text( data.data.phone[1] );	// Show error message near field.
 								}
 							}
-
-							if ( data.data.textarea[0] === false ) {	// If error occured with phone field.
+							// If error occured with e-mail field.
+							if ( data.data.email[0] === false ) {
+			    				if ( $( 'span', form ).hasClass( 'cwpmf-input__email' ) ) {	// If form has input for e-mail.
+			    					$( '.cwpmf-input__email' ).closest( '.cwpmf-label' ).find( 'input' ).addClass( 'cwpmf-field-with-error' );
+									$( '.cwpmf-input__email .cwpmf-input-error-msg', form ).text( data.data.email[1] );	// Show error message near field.
+								}
+							}
+							// If error occured with message field.
+							if ( data.data.textarea[0] === false ) {
 								if ( $( 'span', form ).hasClass( 'cwpmf-input__message' ) ) {	// If form has input for phone.
 									$( '.cwpmf-input__message' ).closest( '.cwpmf-label' ).find( 'textarea' ).addClass( 'cwpmf-field-with-error' );
 									$( '.cwpmf-input__message .cwpmf-input-error-msg', form ).text( data.data.textarea[1] );	// Show error message near field.
