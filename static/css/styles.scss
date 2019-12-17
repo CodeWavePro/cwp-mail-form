@@ -40,7 +40,11 @@ $error: #ff3e3e;
     &:focus,
     &:active {
         border-color: $brand;
-        color: $brand
+        color: $brand;
+
+        & ~ .cwpmf-icon {
+            color: $brand
+        }
     }
 
     // Placeholders.
@@ -74,7 +78,11 @@ $error: #ff3e3e;
 
 // If field has error, this class is added.
 .cwpmf-field-with-error {
-	border-color: $error !important
+	border-color: $error !important;
+
+    & ~ .cwpmf-icon {
+        color: $error !important
+    }
 }
 
 // Main e-mail form styles.
@@ -90,6 +98,14 @@ $error: #ff3e3e;
 	font-weight: bold;
 	text-transform: uppercase;
 	margin-bottom: 25px
+}
+
+.cwpmf-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #b5b5b5;
+    @include transition(300ms)
 }
 
 // Hidden field for error message under inputs and textareas.
