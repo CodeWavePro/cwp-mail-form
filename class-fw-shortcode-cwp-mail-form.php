@@ -23,13 +23,12 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 	 */
 	private function check_name( $name ) {
 		$name_check = [ 'А', 'а', 'Б', 'б', 'В', 'в', 'Г', 'г', 'Д', 'д', 'Е', 'е', 'Ё', 'ё', 'Ж', 'ж', 'З', 'з',
-								'И', 'и', 'Й', 'й', 'К', 'к', 'Л', 'л', 'М', 'м', 'Н', 'н', 'О', 'о', 'П', 'п', 'Р', 'р',
-								'С', 'с', 'Т', 'т', 'У', 'у', 'Ф', 'ф', 'Х', 'х', 'Ц', 'ц', 'Ч', 'ч', 'Ш', 'ш', 'Щ', 'щ',
-								'Ъ', 'ъ', 'Ы', 'ы', 'Ь', 'ь', 'Э', 'э', 'Ю', 'ю', 'Я', 'я',
-								'Є', 'є', 'І', 'і', 'Ї', 'ї',
-								'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h', 'I', 'i',
-								'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r',
-								'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z', '-', '\'', ' ' ];
+						'И', 'и', 'Й', 'й', 'К', 'к', 'Л', 'л', 'М', 'м', 'Н', 'н', 'О', 'о', 'П', 'п', 'Р', 'р',
+						'С', 'с', 'Т', 'т', 'У', 'у', 'Ф', 'ф', 'Х', 'х', 'Ц', 'ц', 'Ч', 'ч', 'Ш', 'ш', 'Щ', 'щ',
+						'Ъ', 'ъ', 'Ы', 'ы', 'Ь', 'ь', 'Э', 'э', 'Ю', 'ю', 'Я', 'я', 'Є', 'є', 'І', 'і', 'Ї', 'ї',
+						'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h', 'I', 'i',
+						'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r',
+						'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z', '-', '\'', ' ' ];
 		$name_arr = preg_split( '//u', $name, -1, PREG_SPLIT_NO_EMPTY );
 
 		for ( $i = 0; $i < count( $name_arr ); $i++ ) {
@@ -42,9 +41,8 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 				}
 			}
 
-			if ( $break_flag == 1 ) {
+			if ( $break_flag === 1 ) {
 				return false;
-				break;
 			}
 		}
 		return true;
@@ -77,6 +75,55 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 
 			if ( $break_flag === 1 ) {
 				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Function checks data from form fields.
+	 * @param $is_field_exists - is field existing in form or not.
+	 * @param $is_field_required - is field required or not.
+	 * @param $field_data - what data from this field came to back-end.
+	 * @param $field_type - data type to check.
+	 */
+	private function check_field_data( $is_field_exists, $is_field_required, $field_data, $field_type ) {
+		if ( $is_field_exists === 'true' ) {
+			if ( ( $is_field_required === 'true' ) && empty( $field_data ) ) {
+				return false;
+			}
+
+			switch ( $field_type ) {
+				case 'name':
+					if ( !empty( $field_data ) &&
+				 		 !$this->check_name( $field_data ) ||
+			 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
+						return false;
+					}
+					break;
+
+				case 'phone':
+					if ( !empty( $field_data ) &&
+				 		 !$this->check_phone( $field_data ) ||
+			 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
+						return false;
+					}
+					break;
+
+				case 'email':
+					if ( !empty( $field_data ) &&
+				 		 !filter_var( $field_data, FILTER_VALIDATE_EMAIL ) ||
+			 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
+						return false;
+					}
+					break;
+
+				case 'text':
+					if ( !empty( $field_data ) &&
+			 	 		 !$this->check_length( $field_data, 0, 500 ) ) {
+						return false;
+					}
+					break;
 			}
 		}
 		return true;
@@ -169,7 +216,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 
 		/**
 		 * Fields for writing error information for user.
-		 * First @param set to true means all is OK.
+		 * First @param set to true means all is OK (set to true by default).
 		 * First @param set to false means that some error occurred.
 		 * Second @param is text of error, that will be displayed to user on the bottom of the field.
 		 */
@@ -178,103 +225,37 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		$email_valid = [true, ''];
 		$message_valid = [true, ''];
 
-		// Check if firstname field exists in form.
-		if ( $is_firstname === 'true' ) {
-			/**
-			 * So, firstname exists in form.
-			 * If it is required but empty - write error.
-			 */
-			if ( ( $is_firstname_required === 'true' ) && empty( $user_firstname ) ) {
-				$firstname_valid[0] = false;
-				$firstname_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-			/**
-			 * So, firstname exists in form, even if not required.
-			 * If it is not empty - check the data.
-			 * If it has not allowed symbols - write error.
-			 * If it is too long - write error.
-			 */
-			if ( !empty( $user_firstname ) &&
-				 !$this->check_name( $user_firstname ) ||
-			 	 !$this->check_length( $user_firstname, 0, 30 ) ) {
-				$firstname_valid[0] = false;
-				$firstname_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-		}
-		$user_firstname = ( $is_firstname_required === 'true' ) ? $user_firstname : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// Firstname field validation.
+		$firstname_check_result = $this->check_field_data( $is_firstname, $is_firstname_required, $user_firstname, 'name' );
+		// If user firstname field not exists - print about this in its data.
+		$user_firstname = ( $is_firstname === 'true' ) ? $user_firstname : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// Validation result for outputing on front-end.
+		$firstname_valid[0] = $firstname_check_result ? true : false;
+		$firstname_valid[1] = $firstname_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
 
-		// Check if phone field exists in form.
-		if ( $is_phone === 'true' ) {
-			/**
-			 * So, phone exists in form.
-			 * If it is required but empty - write error.
-			 */
-			if ( ( $is_phone_required === 'true' ) && empty( $user_phone ) ) {
-				$phone_valid[0] = false;
-				$phone_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-			/**
-			 * So, phone exists in form, even if not required.
-			 * If it is not empty - check the data.
-			 * If it has not allowed symbols - write error.
-			 * If it is too long - write error.
-			 */
-			if ( !empty( $user_phone ) &&
-				 !$this->check_phone( $user_phone ) ||
-			 	 !$this->check_length( $user_phone, 0, 30 ) ) {
-				$phone_valid[0] = false;
-				$phone_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-		}
-		$user_phone = ( $is_phone_required === 'true' ) ? $user_phone : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// Phone field validation.
+		$phone_check_result = $this->check_field_data( $is_phone, $is_phone_required, $user_phone, 'phone' );
+		// If user phone field not exists - print about this in its data.
+		$user_phone = ( $is_phone === 'true' ) ? $user_phone : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// Validation result for outputing on front-end.
+		$phone_valid[0] = $phone_check_result ? true : false;
+		$phone_valid[1] = $phone_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
 
-		// Check if e-mail field exists in form.
-		if ( $is_email === 'true' ) {
-			/**
-			 * So, e-mail exists in form.
-			 * If it is required but empty - write error.
-			 */
-			if ( ( $is_email_required === 'true' ) && empty( $user_email ) ) {
-				$email_valid[0] = false;
-				$email_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-			/**
-			 * So, e-mail exists in form, even if not required.
-			 * If it is not empty - check the data.
-			 * If it has not allowed symbols - write error.
-			 * If it is too long - write error.
-			 */
-			if ( !empty( $user_email ) &&
-				 !filter_var( $user_email, FILTER_VALIDATE_EMAIL ) ||
-			 	 !$this->check_length( $user_email, 0, 30 ) ) {
-				$email_valid[0] = false;
-				$email_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-		}
-		$user_email = ( $is_email_required === 'true' ) ? $user_email : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// E-mail field validation.
+		$email_check_result = $this->check_field_data( $is_email, $is_email_required, $user_email, 'email' );
+		// If user e-mail field not exists - print about this in its data.
+		$user_email = ( $is_email === 'true' ) ? $user_email : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// Validation result for outputing on front-end.
+		$email_valid[0] = $email_check_result ? true : false;
+		$email_valid[1] = $email_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
 
-		// Check if message field exists in form.
-		if ( $is_message === 'true' ) {
-			/**
-			 * So, message exists in form.
-			 * If it is required but empty - write error.
-			 */
-			if ( ( $is_message_required === 'true' ) && empty( $user_message ) ) {
-				$message_valid[0] = false;
-				$message_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-			/**
-			 * So, message exists in form, even if not required.
-			 * If it is not empty - check the data.
-			 * If it is too long - write error.
-			 */
-			if ( !empty( $user_message ) &&
-				 !$this->check_length( $user_message, 0, 500 ) ) {
-				$message_valid[0] = false;
-				$message_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-			}
-		}
-		$user_message = ( $is_message_required === 'true' ) ? $user_message : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// Message field validation.
+		$message_check_result = $this->check_field_data( $is_message, $is_message_required, $user_message, 'text' );
+		// If user message field not exists - print about this in its data.
+		$user_message = ( $is_message === 'true' ) ? $user_message : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		// Validation result for outputing on front-end.
+		$message_valid[0] = $message_check_result ? true : false;
+		$message_valid[1] = $message_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
 
 		/**
 		 * If some of existing fields has errors
@@ -350,11 +331,6 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 
 		$headers = "From: \"" . get_bloginfo( 'name' ) . "\"<no-reply>\r\nContent-type: text/plain; charset=utf-8 \r\n";
 		$send = mail( $email_to, __( 'Форма обратной связи', 'mebel-laim'), $message_to_send, $headers );
-
-		$firstname_valid = [true, ''];
-		$phone_valid = [true, ''];
-		$email_valid = [true, ''];
-		$message_valid = [true, ''];
 
 		if ( $send ) {	// If e-mail send is OK.
 			wp_send_json_success(
