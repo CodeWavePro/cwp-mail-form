@@ -30,7 +30,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 								'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h', 'I', 'i',
 								'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r',
 								'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z', '-', '\'', ' ' ];
-		$name_arr = preg_split('//u', $name, -1, PREG_SPLIT_NO_EMPTY);
+		$name_arr = preg_split( '//u', $name, -1, PREG_SPLIT_NO_EMPTY );
 
 		for ( $i = 0; $i < count( $name_arr ); $i++ ) {
 			$break_flag = 1;
@@ -59,14 +59,13 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 	}
 
 	/**
-	 * Function checks phone symbols (only 0-9, -, +, (, ) are allowed).
+	 * Function checks phone symbols (only 0-9, -, +, (, ), ' ' are allowed).
 	 */
 	private function check_phone( $phone ) {
-		$phone_check = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '+', '(', ')'];
-		$phone_arr = str_split( $phone );
+		$phone_check = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '+', '(', ')', ' '];
+		$phone_arr = preg_split( '//u', $phone, -1, PREG_SPLIT_NO_EMPTY );
 
 		for ( $i = 0; $i < count( $phone_arr ); $i++ ) {
-
 			$break_flag = 1;
 
 			for ( $j = 0; $j < count( $phone_check ); $j++ ) {
@@ -76,12 +75,10 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 				}
 			}
 
-			if ( $break_flag == 1 ) {
+			if ( $break_flag === 1 ) {
 				return false;
-				break;
 			}
 		}
-
 		return true;
 	}
 
@@ -130,8 +127,8 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		 */
 		if ( empty( $is_firstname ) ||
 			 empty( $is_phone ) ||
-			 empty( $is_message ) ||
-			 empty( $is_email ) ) {
+			 empty( $is_email ) ||
+			 empty( $is_message ) ) {
 			wp_send_json_error(
 				[
 					'firstname' 	=> true,
@@ -139,6 +136,33 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 					'email' 		=> true,
 					'textarea'		=> true,
 					'message' 		=> esc_html__( 'Переданы некорректные данные о наличии полей формы.', 'mebel-laim' )
+				]
+			);
+		}
+
+		/**
+		 * Check if field is required.
+		 * True - field required, false - not required.
+		 */
+		$is_firstname_required = $this->clean_value( $_POST['is_firstname_required'] );
+		$is_phone_required = $this->clean_value( $_POST['is_phone_required'] );
+		$is_email_required = $this->clean_value( $_POST['is_email_required'] );
+		$is_message_required = $this->clean_value( $_POST['is_message_required'] );
+
+		/**
+		 * Check if this fields are empty.
+		 */
+		if ( empty( $is_firstname_required ) ||
+			 empty( $is_phone_required ) ||
+			 empty( $is_email_required ) ||
+			 empty( $is_message_required ) ) {
+			wp_send_json_error(
+				[
+					'firstname' 	=> true,
+					'phone' 		=> true,
+					'email' 		=> true,
+					'textarea'		=> true,
+					'message' 		=> esc_html__( 'Переданы некорректные данные об обязательных полях формы.', 'mebel-laim' )
 				]
 			);
 		}
@@ -154,56 +178,103 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		$email_valid = [true, ''];
 		$message_valid = [true, ''];
 
-		/**
-		 * If firstname field exists, but empty|has bad symbols|too short or long
-		 * write errors to this field.
-		 */
-		if ( ( $is_firstname === 'true' ) &&
-			 ( empty( $user_firstname ) ||
-			 !$this->check_name( $user_firstname ) ||
-			 !$this->check_length( $user_firstname, 1, 30 ) ) ) {
-			$firstname_valid[0] = false;
-			$firstname_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+		// Check if firstname field exists in form.
+		if ( $is_firstname === 'true' ) {
+			/**
+			 * So, firstname exists in form.
+			 * If it is required but empty - write error.
+			 */
+			if ( ( $is_firstname_required === 'true' ) && empty( $user_firstname ) ) {
+				$firstname_valid[0] = false;
+				$firstname_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
+			/**
+			 * So, firstname exists in form, even if not required.
+			 * If it is not empty - check the data.
+			 * If it has not allowed symbols - write error.
+			 * If it is too long - write error.
+			 */
+			if ( !empty( $user_firstname ) &&
+				 !$this->check_name( $user_firstname ) ||
+			 	 !$this->check_length( $user_firstname, 0, 30 ) ) {
+				$firstname_valid[0] = false;
+				$firstname_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
 		}
-		$user_firstname = ( $is_firstname === 'true' ) ? $user_firstname : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		$user_firstname = ( $is_firstname_required === 'true' ) ? $user_firstname : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
 
-		/**
-		 * If phone field exists, but empty|has bad symbols|too short or long
-		 * write errors to this field.
-		 */
-		if ( ( $is_phone === 'true' ) &&
-			 ( empty( $user_phone ) ||
-			 !$this->check_phone( $user_phone ) ||
-			 !$this->check_length( $user_phone, 4, 30 ) ) ) {
-			$phone_valid[0] = false;
-			$phone_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+		// Check if phone field exists in form.
+		if ( $is_phone === 'true' ) {
+			/**
+			 * So, phone exists in form.
+			 * If it is required but empty - write error.
+			 */
+			if ( ( $is_phone_required === 'true' ) && empty( $user_phone ) ) {
+				$phone_valid[0] = false;
+				$phone_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
+			/**
+			 * So, phone exists in form, even if not required.
+			 * If it is not empty - check the data.
+			 * If it has not allowed symbols - write error.
+			 * If it is too long - write error.
+			 */
+			if ( !empty( $user_phone ) &&
+				 !$this->check_phone( $user_phone ) ||
+			 	 !$this->check_length( $user_phone, 0, 30 ) ) {
+				$phone_valid[0] = false;
+				$phone_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
 		}
-		$user_phone = ( $is_phone === 'true' ) ? $user_phone : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		$user_phone = ( $is_phone_required === 'true' ) ? $user_phone : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
 
-		/**
-		 * If e-mail field exists, but empty|has bad symbols|too short or long
-		 * write errors to this field.
-		 */
-		if ( ( $is_email === 'true' ) &&
-			 ( empty( $user_email ) ||
-			 !filter_var( $user_email, FILTER_VALIDATE_EMAIL ) ||
-			 !$this->check_length( $user_email, 5, 30 ) ) ) {
-			$email_valid[0] = false;
-			$email_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+		// Check if e-mail field exists in form.
+		if ( $is_email === 'true' ) {
+			/**
+			 * So, e-mail exists in form.
+			 * If it is required but empty - write error.
+			 */
+			if ( ( $is_email_required === 'true' ) && empty( $user_email ) ) {
+				$email_valid[0] = false;
+				$email_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
+			/**
+			 * So, e-mail exists in form, even if not required.
+			 * If it is not empty - check the data.
+			 * If it has not allowed symbols - write error.
+			 * If it is too long - write error.
+			 */
+			if ( !empty( $user_email ) &&
+				 !filter_var( $user_email, FILTER_VALIDATE_EMAIL ) ||
+			 	 !$this->check_length( $user_email, 0, 30 ) ) {
+				$email_valid[0] = false;
+				$email_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
 		}
-		$user_email = ( $is_email === 'true' ) ? $user_email : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		$user_email = ( $is_email_required === 'true' ) ? $user_email : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
 
-		/**
-		 * If message field exists, but empty|too short or long
-		 * write errors to this field.
-		 */
-		if ( ( $is_message === 'true' ) &&
-			 ( empty( $user_message ) ||
-			 !$this->check_length( $user_message, 10, 500 ) ) ) {
-			$message_valid[0] = false;
-			$message_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+		// Check if message field exists in form.
+		if ( $is_message === 'true' ) {
+			/**
+			 * So, message exists in form.
+			 * If it is required but empty - write error.
+			 */
+			if ( ( $is_message_required === 'true' ) && empty( $user_message ) ) {
+				$message_valid[0] = false;
+				$message_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
+			/**
+			 * So, message exists in form, even if not required.
+			 * If it is not empty - check the data.
+			 * If it is too long - write error.
+			 */
+			if ( !empty( $user_message ) &&
+				 !$this->check_length( $user_message, 0, 500 ) ) {
+				$message_valid[0] = false;
+				$message_valid[1] = esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
+			}
 		}
-		$user_message = ( $is_message === 'true' ) ? $user_message : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
+		$user_message = ( $is_message_required === 'true' ) ? $user_message : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
 
 		/**
 		 * If some of existing fields has errors

@@ -37,6 +37,12 @@ $options = [
 
         'choices'   => [
             'firstname_true'    => [
+                'firstname_is_required' => [
+                    'type'  => 'switch',
+                    'label' => esc_html__( 'Is First Name Field Required?', 'mebel-laim' ),
+                    'desc'  => esc_html__( 'Please choose is first name field required or not', 'mebel-laim' )
+                ],
+
                 'firstname_placeholder'   => [
                     'type'  => 'text',
                     'label' => esc_html__( 'First Name Placeholder', 'mebel-laim' ),
@@ -77,6 +83,12 @@ $options = [
 
         'choices'   => [
             'phone_true'    => [
+                'phone_is_required' => [
+                    'type'  => 'switch',
+                    'label' => esc_html__( 'Is Phone Field Required?', 'mebel-laim' ),
+                    'desc'  => esc_html__( 'Please choose is phone field required or not', 'mebel-laim' )
+                ],
+
                 'phone_placeholder'   => [
                     'type'  => 'text',
                     'label' => esc_html__( 'Phone Placeholder', 'mebel-laim' ),
@@ -117,6 +129,12 @@ $options = [
 
         'choices'   => [
             'email_true'    => [
+                'email_is_required' => [
+                    'type'  => 'switch',
+                    'label' => esc_html__( 'Is E-mail Field Required?', 'mebel-laim' ),
+                    'desc'  => esc_html__( 'Please choose is e-mail field required or not', 'mebel-laim' )
+                ],
+
                 'email_placeholder'   => [
                     'type'  => 'text',
                     'label' => esc_html__( 'E-mail Placeholder', 'mebel-laim' ),
@@ -157,6 +175,12 @@ $options = [
 
         'choices'   => [
             'message_true'    => [
+                'message_is_required' => [
+                    'type'  => 'switch',
+                    'label' => esc_html__( 'Is Message Field Required?', 'mebel-laim' ),
+                    'desc'  => esc_html__( 'Please choose is message field required or not', 'mebel-laim' )
+                ],
+
                 'message_placeholder'   => [
                     'type'  => 'text',
                     'label' => esc_html__( 'Message Placeholder', 'mebel-laim' ),

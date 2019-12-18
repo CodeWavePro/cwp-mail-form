@@ -2,6 +2,22 @@ jQuery( function( $ ) {
 	var isActiveAjax = false;
 
 	/**
+	 * If field in some form has some class name (exists),
+	 * return true, if not - false.
+	 */
+	function isFieldExistsInForm( form, tag, className ) {
+		return ( $( tag, form ).hasClass( className ) ? true : false );
+	}
+
+	/**
+	 * If field in some form has some class name (exists) and data-required attribute,
+	 * return true, if not - false.
+	 */
+	function isFieldRequired( form, className ) {
+		return ( $( className, form ).attr( 'data-required' ) ? true : false );
+	}
+
+	/**
 	 * When all page is loaded.
 	 */
 	$( document ).ready( function() {
@@ -9,7 +25,11 @@ jQuery( function( $ ) {
 		var isFirstname = false, 
 			isPhone = false,
 			isMessage = false,
-			isEmail = false;	// Data-attribute if this fields are existing in form.
+			isEmail = false;	// Data-attribute if this fields are existing in form (not existing by default here).
+		var isFirstnameRequired = false,
+			isPhoneRequired = false,
+			isEmailRequired = false,
+			isMessageRequired = false;	// Are these fields required or not (not required by default here).
 
 		/**
 		 * Show more info about product.
@@ -37,33 +57,37 @@ jQuery( function( $ ) {
 							$( '.cwpmf-textarea', this ).removeClass( 'cwpmf-field-with-error' );	// Remove error class from this input field.
 							$( '.cwpmf-input-error-msg', this ).text( '' );	// Remove all error text.
 						}
-						// If firstname input exists.
-						if ( $( 'input', this ).hasClass( 'cwpmf-input-firstname' ) ) {
-							isFirstname = true;	// Set variable to true.
-						}
-						// If phone input exists.
-						if ( $( 'input', this ).hasClass( 'cwpmf-input-phone' ) ) {
-							isPhone = true;	// Set variable to true.
-						}
-						// If e-mail input exists.
-						if ( $( 'input', this ).hasClass( 'cwpmf-input-email' ) ) {
-							isEmail = true;	// Set variable to true.
-						}
-						// If message textarea exists.
-						if ( $( 'textarea', this ).hasClass( 'cwpmf-input-message' ) ) {
-							isMessage = true;	// Set variable to true.
-						}
 					}
 				);
+				// If firstname input exists.
+				isFirstname = isFieldExistsInForm( form, 'input', 'cwpmf-input-firstname' ) ? true : false;	// Set variable.
+				// If firstname field has 'data-required' attribute.
+				isFirstnameRequired = isFieldRequired( form, '.cwpmf-input-firstname' ) ? true : false;	// Set variable.
+				// If phone input exists.
+				isPhone = isFieldExistsInForm( form, 'input', 'cwpmf-input-phone' ) ? true : false;	// Set variable.
+				// If phone field has 'data-required' attribute.
+				isPhoneRequired = isFieldRequired( form, '.cwpmf-input-phone' ) ? true : false;	// Set variable.
+				// If e-mail input exists.
+				isEmail = isFieldExistsInForm( form, 'input', 'cwpmf-input-email' ) ? true : false;	// Set variable.
+				// If e-mail field has 'data-required' attribute.
+				isEmailRequired = isFieldRequired( form, '.cwpmf-input-email' ) ? true : false;	// Set variable.
+				// If message textarea exists.
+				isMessage = isFieldExistsInForm( form, 'textarea', 'cwpmf-input-message' ) ? true : false;	// Set variable.
+				// If phone field has 'data-required' attribute.
+				isMessageRequired = isFieldRequired( form, '.cwpmf-input-message' ) ? true : false;	// Set variable.
 
 				ajaxData = {
-					action			: '_cwpmf_send_email',
-					serial 			: serial,
-					email_to		: emailTo,
-					is_firstname 	: isFirstname,
-					is_phone 		: isPhone,
-					is_email 		: isEmail,
-					is_message 		: isMessage
+					action					: '_cwpmf_send_email',
+					serial 					: serial,
+					email_to				: emailTo,
+					is_firstname 			: isFirstname,
+					is_phone 				: isPhone,
+					is_email 				: isEmail,
+					is_message 				: isMessage,
+					is_firstname_required 	: isFirstnameRequired,
+					is_phone_required 		: isPhoneRequired,
+					is_email_required 		: isEmailRequired,
+					is_message_required		: isMessageRequired
 				};
 
 				$.post( cwpAjax.ajaxurl, ajaxData, function( data ) {	// Ajax post request.

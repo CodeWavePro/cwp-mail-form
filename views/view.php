@@ -19,9 +19,14 @@ switch ( $atts['is_firstname_field']['firstname_choice'] ) {
 								   $atts['is_firstname_field']['firstname_true']['firstname_placeholder'] :
 								   'Имя';
 		$firstname_icon = ( isset( $atts['is_firstname_field']['firstname_true']['firstname_icon'] ) &&
-								   $atts['is_firstname_field']['firstname_true']['firstname_icon'] ) ?
-								   $atts['is_firstname_field']['firstname_true']['firstname_icon']['icon-class'] :
-								   'fas fa-question';
+							$atts['is_firstname_field']['firstname_true']['firstname_icon'] ) ?
+							$atts['is_firstname_field']['firstname_true']['firstname_icon']['icon-class'] :
+							'fas fa-question';
+		$firstname_is_required = ( isset( $atts['is_firstname_field']['firstname_true']['firstname_is_required'] ) &&
+								   $atts['is_firstname_field']['firstname_true']['firstname_is_required'] ) ?
+								   'data-required = "true"' :
+								   '';
+		$firstname_placeholder .= ( $firstname_is_required === '' ) ? '' : ' *';
 		break;
 
 	case 'firstname_false':
@@ -37,9 +42,14 @@ switch ( $atts['is_phone_field']['phone_choice'] ) {
 							   $atts['is_phone_field']['phone_true']['phone_placeholder'] :
 							   'Телефон';
 		$phone_icon = ( isset( $atts['is_phone_field']['phone_true']['phone_icon'] ) &&
-								   $atts['is_phone_field']['phone_true']['phone_icon'] ) ?
-								   $atts['is_phone_field']['phone_true']['phone_icon']['icon-class'] :
-								   'fas fa-question';
+						$atts['is_phone_field']['phone_true']['phone_icon'] ) ?
+						$atts['is_phone_field']['phone_true']['phone_icon']['icon-class'] :
+						'fas fa-question';
+		$phone_is_required = ( isset( $atts['is_phone_field']['phone_true']['phone_is_required'] ) &&
+							   $atts['is_phone_field']['phone_true']['phone_is_required'] ) ?
+							   'data-required = "true"' :
+							   '';
+		$phone_placeholder .= ( $phone_is_required === '' ) ? '' : ' *';
 		break;
 
 	case 'phone_false':
@@ -55,9 +65,14 @@ switch ( $atts['is_email_field']['email_choice'] ) {
 							   $atts['is_email_field']['email_true']['email_placeholder'] :
 							   'Почта';
 		$email_icon = ( isset( $atts['is_email_field']['email_true']['email_icon'] ) &&
-								   $atts['is_email_field']['email_true']['email_icon'] ) ?
-								   $atts['is_email_field']['email_true']['email_icon']['icon-class'] :
-								   'fas fa-question';
+						$atts['is_email_field']['email_true']['email_icon'] ) ?
+						$atts['is_email_field']['email_true']['email_icon']['icon-class'] :
+						'fas fa-question';
+		$email_is_required = ( isset( $atts['is_email_field']['email_true']['email_is_required'] ) &&
+							   $atts['is_email_field']['email_true']['email_is_required'] ) ?
+							   'data-required = "true"' :
+							   '';
+		$email_placeholder .= ( $email_is_required === '' ) ? '' : ' *';
 		break;
 
 	case 'phone_false':
@@ -69,13 +84,18 @@ switch ( $atts['is_email_field']['email_choice'] ) {
 switch ( $atts['is_message_field']['message_choice'] ) {
 	case 'message_true':
 		$message_placeholder = ( isset( $atts['is_message_field']['message_true']['message_placeholder'] ) &&
-							   $atts['is_message_field']['message_true']['message_placeholder'] ) ?
-							   $atts['is_message_field']['message_true']['message_placeholder'] :
-							   'Сообщение';
+								 $atts['is_message_field']['message_true']['message_placeholder'] ) ?
+								 $atts['is_message_field']['message_true']['message_placeholder'] :
+								 'Сообщение';
 		$message_icon = ( isset( $atts['is_message_field']['message_true']['message_icon'] ) &&
-								   $atts['is_message_field']['message_true']['message_icon'] ) ?
-								   $atts['is_message_field']['message_true']['message_icon']['icon-class'] :
-								   'fas fa-question';
+						  $atts['is_message_field']['message_true']['message_icon'] ) ?
+						  $atts['is_message_field']['message_true']['message_icon']['icon-class'] :
+						  'fas fa-question';
+		$message_is_required = ( isset( $atts['is_message_field']['message_true']['message_is_required'] ) &&
+						    	 $atts['is_message_field']['message_true']['message_is_required'] ) ?
+								 'data-required = "true"' :
+								 '';
+		$message_placeholder .= ( $message_is_required === '' ) ? '' : ' *';
 		break;
 
 	case 'message_false':
@@ -96,7 +116,12 @@ switch ( $atts['is_message_field']['message_choice'] ) {
 		<!-- If firstname field is set to 'Show', so placeholder is not empty. -->
 		<?php if ( !empty( $firstname_placeholder ) ) : ?>
 			<label class = "cwpmf-label" for = "cwpmf-input-firstname">
-				<input id = "cwpmf-input-firstname" class = "cwpmf-input cwpmf-input-firstname" type = "text" name = "cwpmf-input-firstname" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $firstname_placeholder ) ?>" />
+				<input id = "cwpmf-input-firstname"
+					   class = "cwpmf-input cwpmf-input-firstname"
+					   type = "text"
+					   name = "cwpmf-input-firstname"
+					   placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $firstname_placeholder ) ?>"
+					   <?php echo esc_attr( $firstname_is_required ) ?> />
 				<!-- Icon for this field. -->
 				<i class = "<?php echo esc_attr( $firstname_icon ) ?> cwpmf-icon"></i>
 
@@ -110,7 +135,12 @@ switch ( $atts['is_message_field']['message_choice'] ) {
 		<!-- If phone field is set to 'Show', so placeholder is not empty. -->
 		<?php if ( !empty( $phone_placeholder ) ) : ?>
 			<label class = "cwpmf-label" for = "cwpmf-input-phone">
-				<input id = "cwpmf-input-phone" class = "cwpmf-input cwpmf-input-phone" type = "text" name = "cwpmf-input-phone" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $phone_placeholder ) ?>" />
+				<input id = "cwpmf-input-phone"
+					   class = "cwpmf-input cwpmf-input-phone"
+					   type = "text"
+					   name = "cwpmf-input-phone"
+					   placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $phone_placeholder ) ?>"
+					   <?php echo esc_attr( $phone_is_required ) ?> />
 				<!-- Icon for this field. -->
 				<i class = "<?php echo esc_attr( $phone_icon ) ?> cwpmf-icon"></i>
 
@@ -124,7 +154,12 @@ switch ( $atts['is_message_field']['message_choice'] ) {
 		<!-- If e-mail field is set to 'Show', so placeholder is not empty. -->
 		<?php if ( !empty( $email_placeholder ) ) : ?>
 			<label class = "cwpmf-label" for = "cwpmf-input-email">
-				<input id = "cwpmf-input-email" class = "cwpmf-input cwpmf-input-email" type = "text" name = "cwpmf-input-email" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $email_placeholder ) ?>" />
+				<input id = "cwpmf-input-email"
+					   class = "cwpmf-input cwpmf-input-email"
+					   type = "text"
+					   name = "cwpmf-input-email"
+					   placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $email_placeholder ) ?>"
+					   <?php echo esc_attr( $email_is_required ) ?> />
 				<!-- Icon for this field. -->
 				<i class = "<?php echo esc_attr( $email_icon ) ?> cwpmf-icon"></i>
 
@@ -138,7 +173,12 @@ switch ( $atts['is_message_field']['message_choice'] ) {
 		<!-- If message field is set to 'Show', so placeholder is not empty. -->
 		<?php if ( !empty( $message_placeholder ) ) : ?>
 			<label class = "cwpmf-label" for = "cwpmf-input-message">
-				<textarea id = "cwpmf-input-message" class = "cwpmf-textarea cwpmf-input-message" name = "cwpmf-input-message" placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $message_placeholder ) ?>"></textarea>
+				<textarea id = "cwpmf-input-message"
+						  class = "cwpmf-textarea cwpmf-input-message"
+						  name = "cwpmf-input-message"
+						  placeholder = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $message_placeholder ) ?>"
+						  <?php echo esc_attr( $message_is_required ) ?>>
+				</textarea>
 				<!-- Icon for this field. -->
 				<i class = "<?php echo esc_attr( $message_icon ) ?> cwpmf-icon"></i>
 
