@@ -82,49 +82,53 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 
 	/**
 	 * Function checks data from form fields.
-	 * @param $is_field_exists - is field existing in form or not.
 	 * @param $is_field_required - is field required or not.
 	 * @param $field_data - what data from this field came to back-end.
 	 * @param $field_type - data type to check.
 	 */
-	private function check_field_data( $is_field_exists, $is_field_required, $field_data, $field_type ) {
-		if ( $is_field_exists === 'true' ) {
-			if ( ( $is_field_required === 'true' ) && empty( $field_data ) ) {
-				return false;
-			}
+	private function check_field_data( $is_field_required, $field_data, $field_type ) {
+		if ( ( $is_field_required === 'true' ) && empty( $field_data ) ) {
+			return false;
+		}
 
-			switch ( $field_type ) {
-				case 'name':
-					if ( !empty( $field_data ) &&
-				 		 !$this->check_name( $field_data ) ||
-			 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
-						return false;
-					}
-					break;
+		switch ( $field_type ) {
+			case 'text':
+				if ( !empty( $field_data ) &&
+		 	 		 !$this->check_length( $field_data, 0, 50 ) ) {
+					return false;
+				}
+				break;
 
-				case 'phone':
-					if ( !empty( $field_data ) &&
-				 		 !$this->check_phone( $field_data ) ||
-			 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
-						return false;
-					}
-					break;
+			case 'name':
+				if ( !empty( $field_data ) &&
+			 		 !$this->check_name( $field_data ) ||
+		 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
+					return false;
+				}
+				break;
 
-				case 'email':
-					if ( !empty( $field_data ) &&
-				 		 !filter_var( $field_data, FILTER_VALIDATE_EMAIL ) ||
-			 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
-						return false;
-					}
-					break;
+			case 'phone':
+				if ( !empty( $field_data ) &&
+			 		 !$this->check_phone( $field_data ) ||
+		 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
+					return false;
+				}
+				break;
 
-				case 'text':
-					if ( !empty( $field_data ) &&
-			 	 		 !$this->check_length( $field_data, 0, 500 ) ) {
-						return false;
-					}
-					break;
-			}
+			case 'email':
+				if ( !empty( $field_data ) &&
+			 		 !filter_var( $field_data, FILTER_VALIDATE_EMAIL ) ||
+		 	 		 !$this->check_length( $field_data, 0, 30 ) ) {
+					return false;
+				}
+				break;
+
+			case 'text':
+				if ( !empty( $field_data ) &&
+		 	 		 !$this->check_length( $field_data, 0, 500 ) ) {
+					return false;
+				}
+				break;
 		}
 		return true;
 	}
@@ -153,181 +157,135 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 	 * Send User e-mail to website Administrator.
 	 */
     public function _cwpmf_send_email() {
-		parse_str( $_POST['serial'], $serialize_arr );
-		$user_firstname = $this->clean_value( $serialize_arr['cwpmf-input-firstname'] );
-		$user_phone = $this->clean_value( $serialize_arr['cwpmf-input-phone'] );
-		$user_email = $this->clean_value( $serialize_arr['cwpmf-input-email'] );
-		$user_message = $this->clean_value( $serialize_arr['cwpmf-input-message'] );
 		$email_to = $this->clean_value( $_POST['email_to'] );
+		// Empty array for results of all fields validation.
+		$post_fields_array = $_POST['fields_array'];
+		$fields_array = $field_check_result = [];
+		// Variable is false if all fields are good. Will be set to true if at least one error appeared.
+		$is_error = false;
 
-		/**
-		 * Check if field exists in form.
-		 * True - field exists, false - field does not exists.
-		 */
-		$is_firstname = $this->clean_value( $_POST['is_firstname'] );
-		$is_phone = $this->clean_value( $_POST['is_phone'] );
-		$is_email = $this->clean_value( $_POST['is_email'] );
-		$is_message = $this->clean_value( $_POST['is_message'] );
+		// Cleaning all array data and checking for not valid data.
+		foreach ( $post_fields_array as $key => $field ) {
+			$fields_array[$key]['type'] = $this->clean_value( $field['type'] );
+			$fields_array[$key]['class'] = $this->clean_value( $field['class'] );
+			$fields_array[$key]['required'] = $this->clean_value( $field['required'] );
+			$fields_array[$key]['value'] = $this->clean_value( $field['value'] );
 
-		/**
-		 * Check if this fields are empty.
-		 */
-		if ( empty( $is_firstname ) ||
-			 empty( $is_phone ) ||
-			 empty( $is_email ) ||
-			 empty( $is_message ) ) {
+			/**
+			 * Check if this fields are empty -> sending error message.
+			 */
+			if ( empty( $fields_array[$key]['type'] ) ||
+				 empty( $fields_array[$key]['required'] ) ) {
+				wp_send_json_error(
+					[
+						'message'	=> sprintf( esc_html__( 'Переданы некорректные данные о поле с классом %s.', 'mebel-laim' ), $fields_array[$key]['class'] )
+					]
+				);
+			}
+
+			/**
+			 * Validation results array - will be send to front-end:
+			 * - class name of the field that goes to validation;
+			 * - field validation result;
+			 * - validation result message: error text if error, nothing if it's OK.
+			 */
+			$field_check_result[$key]['class'] = $fields_array[$key]['class'];
+			$field_check_result[$key]['result'] = $this->check_field_data( $fields_array[$key]['required'], $fields_array[$key]['value'], $fields_array[$key]['type'] );
+			$field_check_result[$key]['message'] = !$field_check_result[$key]['result'] ? esc_html__( 'Данные отсутствуют или некорректы.', 'mebel-laim' ) : '';
+
+			// If at least one field has error after validation.
+			if ( !$field_check_result[$key]['result'] ) {
+				$is_error = true;	// Set variable for error checking to true.
+			}
+		}
+
+		// If at least one field has error.
+		if ( $is_error ) {
 			wp_send_json_error(
 				[
-					'firstname' 	=> true,
-					'phone' 		=> true,
-					'email' 		=> true,
-					'textarea'		=> true,
-					'message' 		=> esc_html__( 'Переданы некорректные данные о наличии полей формы.', 'mebel-laim' )
+					'array'		=> $field_check_result,
+					'message' 	=> esc_html__( 'Ошибка введенных данных.', 'mebel-laim' )
 				]
 			);
 		}
 
 		/**
-		 * Check if field is required.
-		 * True - field required, false - not required.
-		 */
-		$is_firstname_required = $this->clean_value( $_POST['is_firstname_required'] );
-		$is_phone_required = $this->clean_value( $_POST['is_phone_required'] );
-		$is_email_required = $this->clean_value( $_POST['is_email_required'] );
-		$is_message_required = $this->clean_value( $_POST['is_message_required'] );
-
-		/**
-		 * Check if this fields are empty.
-		 */
-		if ( empty( $is_firstname_required ) ||
-			 empty( $is_phone_required ) ||
-			 empty( $is_email_required ) ||
-			 empty( $is_message_required ) ) {
-			wp_send_json_error(
-				[
-					'firstname' 	=> true,
-					'phone' 		=> true,
-					'email' 		=> true,
-					'textarea'		=> true,
-					'message' 		=> esc_html__( 'Переданы некорректные данные об обязательных полях формы.', 'mebel-laim' )
-				]
-			);
-		}
-
-		/**
-		 * Fields for writing error information for user.
-		 * First @param set to true means all is OK (set to true by default).
-		 * First @param set to false means that some error occurred.
-		 * Second @param is text of error, that will be displayed to user on the bottom of the field.
-		 */
-		$firstname_valid = [true, ''];
-		$phone_valid = [true, ''];
-		$email_valid = [true, ''];
-		$message_valid = [true, ''];
-
-		// Firstname field validation.
-		$firstname_check_result = $this->check_field_data( $is_firstname, $is_firstname_required, $user_firstname, 'name' );
-		// If user firstname field not exists - print about this in its data.
-		$user_firstname = ( $is_firstname === 'true' ) ? $user_firstname : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
-		// Validation result for outputing on front-end.
-		$firstname_valid[0] = $firstname_check_result ? true : false;
-		$firstname_valid[1] = $firstname_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-
-		// Phone field validation.
-		$phone_check_result = $this->check_field_data( $is_phone, $is_phone_required, $user_phone, 'phone' );
-		// If user phone field not exists - print about this in its data.
-		$user_phone = ( $is_phone === 'true' ) ? $user_phone : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
-		// Validation result for outputing on front-end.
-		$phone_valid[0] = $phone_check_result ? true : false;
-		$phone_valid[1] = $phone_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-
-		// E-mail field validation.
-		$email_check_result = $this->check_field_data( $is_email, $is_email_required, $user_email, 'email' );
-		// If user e-mail field not exists - print about this in its data.
-		$user_email = ( $is_email === 'true' ) ? $user_email : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
-		// Validation result for outputing on front-end.
-		$email_valid[0] = $email_check_result ? true : false;
-		$email_valid[1] = $email_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-
-		// Message field validation.
-		$message_check_result = $this->check_field_data( $is_message, $is_message_required, $user_message, 'text' );
-		// If user message field not exists - print about this in its data.
-		$user_message = ( $is_message === 'true' ) ? $user_message : esc_html__( 'данное поле отсутствует в форме', 'mebel-laim' );
-		// Validation result for outputing on front-end.
-		$message_valid[0] = $message_check_result ? true : false;
-		$message_valid[1] = $message_check_result ? '' : esc_html__( 'Данные отсутствуют или недопустимы.', 'mebel-laim' );
-
-		/**
-		 * If some of existing fields has errors
-		 * send this errors to front-end.
-		 */
-		if ( !$firstname_valid[0] ||
-			 !$phone_valid[0] ||
-			 !$email_valid[0] ||
-			 !$message_valid[0] ) {
-			wp_send_json_error(
-				[
-					'firstname' 	=> $firstname_valid,
-					'phone' 		=> $phone_valid,
-					'email'			=> $email_valid,
-					'textarea'		=> $message_valid,
-					'message' 		=> esc_html__( 'Ошибка введенных данных.', 'mebel-laim' )
-				]
-			);
-		}
-
-		/**
-		 * If e-mail option from options.php file is empty
-		 * send error about its emptiness to front-end, f.e. console.
+		 * If all form fields are valid - let's check e-mail address for sending message.
+		 * If e-mail option from options.php file is empty -> send error about its emptiness to front-end, f.e. for console.
 		 */
 		if ( empty( $email_to ) ) {
 			wp_send_json_error(
 				[
-					'firstname' 	=> $firstname_valid,
-					'phone' 		=> $phone_valid,
-					'email'			=> $email_valid,
-					'textarea'		=> $message_valid,
-					'message' 		=> esc_html__( 'Почта для отправки отсутствует.', 'mebel-laim' )
+					'message'	=> esc_html__( 'Почта для отправки отсутствует.', 'mebel-laim' )
 				]
 			);
 		}	else {
 			// E-mail format validation.
 			$mail_validate = filter_var( $email_to, FILTER_VALIDATE_EMAIL );
-			// If there are some errors.
+			// If there are some errors -> send error message about it.
 			if ( !$mail_validate ) {
-				// Send error about it.
 				wp_send_json_error(
 					[
-						'firstname' 	=> $firstname_valid,
-						'phone' 		=> $phone_valid,
-						'email'			=> $email_valid,
-						'textarea'		=> $message_valid,
-						'message' 		=> esc_html__( 'Почта для отправки неверного формата.', 'mebel-laim' )
+						'message' 	=> esc_html__( 'Почта для отправки неверного формата.', 'mebel-laim' )
 					]
 				);
 			}
-			// If e-mail length is too big or small.
+			// If e-mail length is too big or small -> send error about it.
 			if ( !$this->check_length( $email_to, 5, 30 ) ) {
-				// Send error about it.
 				wp_send_json_error(
 					[
-						'firstname' 	=> $firstname_valid,
-						'phone' 		=> $phone_valid,
-						'email'			=> $email_valid,
-						'textarea'		=> $message_valid,
-						'message' 		=> esc_html__( 'Недопустимый размер почтового адреса для отправки.', 'mebel-laim' )
+						'message' 	=> esc_html__( 'Недопустимый размер почтового адреса для отправки.', 'mebel-laim' )
 					]
 				);
 			}
 		}
 
+		/**
+		 * If all form data is correct and e-mail for sending message is valid,
+		 * let's make readable message (more or less ¯\_(ツ)_/¯ ).
+		 * At first - empty all fields for future letter.
+		 */
+		$user_text = $user_name = $user_phone = $user_email = $user_message = '';
+		foreach ( $fields_array as $field ) {
+			switch ( $field['type'] ) {
+				case 'text':
+					$user_text .= $field['value'] . ' ';
+					break;
+
+				case 'name':
+					$user_name .= $field['value'] . ' ';
+					break;
+
+				case 'phone':
+					$user_phone .= $field['value'] . ' ';
+					break;
+
+				case 'email':
+					$user_email .= $field['value'] . ' ';
+					break;
+
+				case 'message':
+					$user_message .= $field['value'] . ' ';
+					break;
+			}
+		}
+		// Remove last symbols (spaces).
+		$user_text = substr( $user_text, 0, -1 );
+		$user_name = substr( $user_name, 0, -1 );
+		$user_phone = substr( $user_phone, 0, -1 );
+		$user_email = substr( $user_email, 0, -1 );
+		$user_message = substr( $user_message, 0, -1 );
+
+		$user_name = !empty( $user_name ) ? sprintf( esc_html__( 'Отправитель: %s.', 'mebel-laim' ), $user_name ) . PHP_EOL : '';
+		$user_phone = !empty( $user_phone ) ? sprintf( esc_html__( 'Телефон отправителя: %s.', 'mebel-laim' ), $user_phone ) . PHP_EOL : '';
+		$user_email = !empty( $user_email ) ? sprintf( esc_html__( 'E-mail отправителя: %s.', 'mebel-laim' ), $user_email ) . PHP_EOL : '';
+		$user_text = !empty( $user_text ) ? sprintf( esc_html__( 'Содержание текстовых полей формы: %s.', 'mebel-laim' ), $user_text ) . PHP_EOL : '';
+		$user_message = !empty( $user_message ) ? sprintf( esc_html__( 'Сообщение отправителя: %s.', 'mebel-laim' ), $user_message ) : '';
+
 		// E-mail message text:
-		$message_to_send = __( 'Здравствуйте!', 'mebel-laim' ) . "\n";
-		$message_to_send .= __( 'Вам прислали сообщение с формы обратной связи.', 'mebel-laim' ) . "\n\n";
-		$message_to_send .= __( 'Отправитель: ', 'mebel-laim' ) . $user_firstname . ".\n";
-		$message_to_send .= __( 'Телефон отправителя: ', 'mebel-laim' ) . $user_phone . ".\n";
-		$message_to_send .= __( 'E-mail отправителя: ', 'mebel-laim' ) . $user_email . ".\n";
-		$message_to_send .= __( 'Сообщение: ', 'mebel-laim' ) . $user_message;
+		$message_to_send = esc_html__( 'Здравствуйте!', 'mebel-laim' ) . "\n";
+		$message_to_send .= esc_html__( 'Вам прислали сообщение с формы обратной связи.', 'mebel-laim' ) . "\n\n";
+		$message_to_send .= $user_name . $user_phone . $user_email . $user_text . $user_message;
 
 		$headers = "From: \"" . get_bloginfo( 'name' ) . "\"<no-reply>\r\nContent-type: text/plain; charset=utf-8 \r\n";
 		$send = mail( $email_to, __( 'Форма обратной связи', 'mebel-laim'), $message_to_send, $headers );
@@ -335,21 +293,13 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		if ( $send ) {	// If e-mail send is OK.
 			wp_send_json_success(
 				[
-					'firstname' 	=> $firstname_valid,
-					'phone' 		=> $phone_valid,
-					'email'			=> $email_valid,
-					'textarea'		=> $message_valid,
-					'message'	 	=> esc_html__( 'Спасибо за Ваше сообщение. Мы постараемся ответить Вам в кратчайшие сроки.', 'mebel-laim' )
+					'message' 	=> esc_html__( 'Спасибо за Ваше сообщение. Мы постараемся ответить Вам в кратчайшие сроки.', 'mebel-laim' )
 				]
 			);
 		}	else {	// If e-mail send is not OK.
 			wp_send_json_error(
 				[
-					'firstname' 	=> $firstname_valid,
-					'phone' 		=> $phone_valid,
-					'email'			=> $email_valid,
-					'textarea'		=> $message_valid,
-					'message' 		=> esc_html__( 'К сожалению, при отправке сообщения произошла непредвиденная ошибка. Попробуйте повторить отправку позже.', 'mebel-laim' )
+					'message'	=> esc_html__( 'К сожалению, при отправке сообщения произошла непредвиденная ошибка. Попробуйте повторить отправку позже.', 'mebel-laim' )
 				]
 			);
 		}

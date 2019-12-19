@@ -21,15 +21,17 @@ jQuery( function( $ ) {
 	 * When all page is loaded.
 	 */
 	$( document ).ready( function() {
-		var form, ajaxData, serial, emailTo;	// For e-mail form data sending.
-		var isFirstname = false, 
+		var form, ajaxData, emailTo;	// For e-mail form data sending.
+		var fieldsArray;	// Array for all form fields.
+		var isText = false, 
 			isPhone = false,
-			isMessage = false,
-			isEmail = false;	// Data-attribute if this fields are existing in form (not existing by default here).
+			isEmail = false,
+			isMessage = false;	// Data-attribute if this fields are existing in form (not existing by default here).
 		var isFirstnameRequired = false,
 			isPhoneRequired = false,
 			isEmailRequired = false,
 			isMessageRequired = false;	// Are these fields required or not (not required by default here).
+		var iter, invalidFieldClassName;
 
 		/**
 		 * Show more info about product.
@@ -40,54 +42,72 @@ jQuery( function( $ ) {
 			if ( !isActiveAjax ) {	// If user can use ajax.
 				isActiveAjax = true;	// Ajax for other actions is blocked.
 				form = $( this );
-				serial = form.serialize();
 				emailTo = form.attr( 'data-to' );
 
 				// Check each label in form.
-				$( '.cwpmf-label', form ).each(
-					function( index, el ) {
-						// If input field has class for error.
-						if ( $( '.cwpmf-input', this ).hasClass( 'cwpmf-field-with-error' ) ) {
-							$( '.cwpmf-input', this ).removeClass( 'cwpmf-field-with-error' );	// Remove error class from this input field.
-							$( '.cwpmf-input-error-msg', this ).text( '' );	// Remove all error text.
-						}
+				$( '.cwpmf-input-error-msg', form ).text( '' );	// Remove all error text.
 
-						// If textarea field has class for error.
-						if ( $( '.cwpmf-textarea', this ).hasClass( 'cwpmf-field-with-error' ) ) {
-							$( '.cwpmf-textarea', this ).removeClass( 'cwpmf-field-with-error' );	// Remove error class from this input field.
-							$( '.cwpmf-input-error-msg', this ).text( '' );	// Remove all error text.
-						}
-					}
-				);
-				// If firstname input exists.
-				isFirstname = isFieldExistsInForm( form, 'input', 'cwpmf-input-firstname' ) ? true : false;	// Set variable.
-				// If firstname field has 'data-required' attribute.
-				isFirstnameRequired = isFieldRequired( form, '.cwpmf-input-firstname' ) ? true : false;	// Set variable.
-				// If phone input exists.
-				isPhone = isFieldExistsInForm( form, 'input', 'cwpmf-input-phone' ) ? true : false;	// Set variable.
-				// If phone field has 'data-required' attribute.
-				isPhoneRequired = isFieldRequired( form, '.cwpmf-input-phone' ) ? true : false;	// Set variable.
-				// If e-mail input exists.
-				isEmail = isFieldExistsInForm( form, 'input', 'cwpmf-input-email' ) ? true : false;	// Set variable.
-				// If e-mail field has 'data-required' attribute.
-				isEmailRequired = isFieldRequired( form, '.cwpmf-input-email' ) ? true : false;	// Set variable.
-				// If message textarea exists.
-				isMessage = isFieldExistsInForm( form, 'textarea', 'cwpmf-input-message' ) ? true : false;	// Set variable.
-				// If phone field has 'data-required' attribute.
-				isMessageRequired = isFieldRequired( form, '.cwpmf-input-message' ) ? true : false;	// Set variable.
+				fieldsArray = new Array();
+
+				if ( $( 'input', form ).hasClass( 'cwpmf-input-text' ) ) {
+					$( '.cwpmf-input-text' ).each( function( index, el ) {
+						fieldsArray.push( {
+							'type'		: 'text',
+							'class'		: $( this ).attr( 'class' ),
+							'required'	: $( this ).attr( 'data-required' ),
+							'value'		: $( this ).val()
+						} );
+					} );
+				}
+
+				if ( $( 'input', form ).hasClass( 'cwpmf-input-name' ) ) {
+					$( '.cwpmf-input-name' ).each( function( index, el ) {
+						fieldsArray.push( {
+							'type'		: 'name',
+							'class'		: $( this ).attr( 'class' ),
+							'required'	: $( this ).attr( 'data-required' ),
+							'value'		: $( this ).val()
+						} );
+					} );
+				}
+
+				if ( $( 'input', form ).hasClass( 'cwpmf-input-phone' ) ) {
+					$( '.cwpmf-input-phone' ).each( function( index, el ) {
+						fieldsArray.push( {
+							'type'		: 'phone',
+							'class'		: $( this ).attr( 'class' ),
+							'required'	: $( this ).attr( 'data-required' ),
+							'value'		: $( this ).val()
+						} );
+					} );
+				}
+
+				if ( $( 'input', form ).hasClass( 'cwpmf-input-email' ) ) {
+					$( '.cwpmf-input-email' ).each( function( index, el ) {
+						fieldsArray.push( {
+							'type'		: 'email',
+							'class'		: $( this ).attr( 'class' ),
+							'required'	: $( this ).attr( 'data-required' ),
+							'value'		: $( this ).val()
+						} );
+					} );
+				}
+
+				if ( $( 'textarea', form ).hasClass( 'cwpmf-input-message' ) ) {
+					$( '.cwpmf-input-message' ).each( function( index, el ) {
+						fieldsArray.push( {
+							'type'		: 'message',
+							'class'		: $( this ).attr( 'class' ),
+							'required'	: $( this ).attr( 'data-required' ),
+							'value'		: $( this ).val()
+						} );
+					} );
+				}
 
 				ajaxData = {
-					action					: '_cwpmf_send_email',
-					serial 					: serial,
-					email_to				: emailTo,
-					is_firstname 			: isFirstname,
-					is_phone 				: isPhone,
-					is_email 				: isEmail,
-					is_message 				: isMessage,
-					is_firstname_required 	: isFirstnameRequired,
-					is_phone_required 		: isPhoneRequired,
-					is_email_required 		: isEmailRequired,
-					is_message_required		: isMessageRequired
+					action		: '_cwpmf_send_email',
+					email_to	: emailTo,
+					fields_array: fieldsArray
 				};
 
 				$.post( cwpAjax.ajaxurl, ajaxData, function( data ) {	// Ajax post request.
@@ -110,34 +130,13 @@ jQuery( function( $ ) {
 						case false: 	// If we have some errors.
 			    			console.log( data.data.message );	// Show errors in console.
 
-			    			// If error occured with name field.
-		    				if ( data.data.firstname[0] === false ) {
-		    					if ( $( 'span', form ).hasClass( 'cwpmf-input__firstname' ) ) {	// If form has input for name.
-		    						$( '.cwpmf-input__firstname' ).closest( '.cwpmf-label' ).find( 'input' ).addClass( 'cwpmf-field-with-error' );
-									$( '.cwpmf-input__firstname .cwpmf-input-error-msg', form ).text( data.data.firstname[1] );	// Show error message near field.
-								}
-							}
-							// If error occured with phone field.
-							if ( data.data.phone[0] === false ) {
-			    				if ( $( 'span', form ).hasClass( 'cwpmf-input__phone' ) ) {	// If form has input for phone.
-			    					$( '.cwpmf-input__phone' ).closest( '.cwpmf-label' ).find( 'input' ).addClass( 'cwpmf-field-with-error' );
-									$( '.cwpmf-input__phone .cwpmf-input-error-msg', form ).text( data.data.phone[1] );	// Show error message near field.
-								}
-							}
-							// If error occured with e-mail field.
-							if ( data.data.email[0] === false ) {
-			    				if ( $( 'span', form ).hasClass( 'cwpmf-input__email' ) ) {	// If form has input for e-mail.
-			    					$( '.cwpmf-input__email' ).closest( '.cwpmf-label' ).find( 'input' ).addClass( 'cwpmf-field-with-error' );
-									$( '.cwpmf-input__email .cwpmf-input-error-msg', form ).text( data.data.email[1] );	// Show error message near field.
-								}
-							}
-							// If error occured with message field.
-							if ( data.data.textarea[0] === false ) {
-								if ( $( 'span', form ).hasClass( 'cwpmf-input__message' ) ) {	// If form has input for phone.
-									$( '.cwpmf-input__message' ).closest( '.cwpmf-label' ).find( 'textarea' ).addClass( 'cwpmf-field-with-error' );
-									$( '.cwpmf-input__message .cwpmf-input-error-msg', form ).text( data.data.textarea[1] );	// Show error message near field.
-								}
-							}
+			    			if ( data.data.array ) {
+			    				for(iter = 0; iter < data.data.array.length; iter++ ) {
+			    					invalidFieldClassName = '.' + data.data.array[iter]['class'];
+			    					invalidFieldClassName = invalidFieldClassName.replace( / /g, '.' );
+			    					$( invalidFieldClassName, form ).closest( '.cwpmf-label' ).find( '.cwpmf-input-error-msg' ).text( data.data.array[iter]['message'] );
+			    				}
+			    			}
 			    			isActiveAjax = false;	// User can use ajax ahead.
 			    			break;
 
