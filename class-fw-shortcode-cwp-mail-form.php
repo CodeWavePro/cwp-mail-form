@@ -167,7 +167,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		// Cleaning all array data and checking for not valid data.
 		foreach ( $post_fields_array as $key => $field ) {
 			$fields_array[$key]['type'] = $this->clean_value( $field['type'] );
-			$fields_array[$key]['class'] = $this->clean_value( $field['class'] );
+			$fields_array[$key]['id'] = $this->clean_value( $field['id'] );
 			$fields_array[$key]['required'] = $this->clean_value( $field['required'] );
 			$fields_array[$key]['value'] = $this->clean_value( $field['value'] );
 
@@ -189,7 +189,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 			 * - field validation result;
 			 * - validation result message: error text if error, nothing if it's OK.
 			 */
-			$field_check_result[$key]['class'] = $fields_array[$key]['class'];
+			$field_check_result[$key]['id'] = $fields_array[$key]['id'];
 			$field_check_result[$key]['result'] = $this->check_field_data( $fields_array[$key]['required'], $fields_array[$key]['value'], $fields_array[$key]['type'] );
 			$field_check_result[$key]['message'] = !$field_check_result[$key]['result'] ? esc_html__( 'Данные отсутствуют или некорректы.', 'mebel-laim' ) : '';
 
@@ -280,7 +280,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		$user_phone = !empty( $user_phone ) ? sprintf( esc_html__( 'Телефон отправителя: %s.', 'mebel-laim' ), $user_phone ) . PHP_EOL : '';
 		$user_email = !empty( $user_email ) ? sprintf( esc_html__( 'E-mail отправителя: %s.', 'mebel-laim' ), $user_email ) . PHP_EOL : '';
 		$user_text = !empty( $user_text ) ? sprintf( esc_html__( 'Содержание текстовых полей формы: %s.', 'mebel-laim' ), $user_text ) . PHP_EOL : '';
-		$user_message = !empty( $user_message ) ? sprintf( esc_html__( 'Сообщение отправителя: %s.', 'mebel-laim' ), $user_message ) : '';
+		$user_message = !empty( $user_message ) ? sprintf( esc_html__( 'Сообщение отправителя: %s', 'mebel-laim' ), $user_message ) : '';
 
 		// E-mail message text:
 		$message_to_send = esc_html__( 'Здравствуйте!', 'mebel-laim' ) . "\n";

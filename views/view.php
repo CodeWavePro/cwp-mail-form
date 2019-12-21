@@ -28,7 +28,8 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 			case 'choice-text':
 				$fields_array[$key]['structure'] = '
 					<input type = "text"
-						   class = "cwpmf-input cwpmf-input-text cwpmf-input-text-' . esc_attr( $text_field_count ) . '"
+						   id = "cwpmf-input-text-' . esc_attr( $text_field_count ) . '"
+						   class = "cwpmf-input cwpmf-input-text"
 						   name = "cwpmf-input-text-' . esc_attr( $text_field_count ) . '"
 						   placeholder = "' . esc_attr( $fields_array[$key]['placeholder'] ) . '"
 						   data-required = "' . esc_attr( $fields_array[$key]['is_required'] ) . '" />
@@ -42,7 +43,8 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 			case 'choice-name':
 				$fields_array[$key]['structure'] = '
 					<input type = "text"
-						   class = "cwpmf-input cwpmf-input-name cwpmf-input-name-' . esc_attr( $name_field_count ) . '"
+						   id = "cwpmf-input-name-' . esc_attr( $name_field_count ) . '"
+						   class = "cwpmf-input cwpmf-input-name"
 						   name = "cwpmf-input-text-' . esc_attr( $name_field_count ) . '"
 						   placeholder = "' . esc_attr( $fields_array[$key]['placeholder'] ) . '"
 						   data-required = "' . esc_attr( $fields_array[$key]['is_required'] ) . '" />
@@ -56,7 +58,8 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 			case 'choice-phone':
 				$fields_array[$key]['structure'] = '
 					<input type = "text"
-						   class = "cwpmf-input cwpmf-input-phone cwpmf-input-phone-' . esc_attr( $phone_field_count ) . '"
+						   id = "cwpmf-input-phone-' . esc_attr( $phone_field_count ) . '"
+						   class = "cwpmf-input cwpmf-input-phone"
 						   name = "cwpmf-input-phone-' . esc_attr( $phone_field_count ) . '"
 						   placeholder = "' . $fields_array[$key]['placeholder'] . '"
 						   data-required = "' . $fields_array[$key]['is_required'] . '" />
@@ -70,7 +73,8 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 			case 'choice-email':
 				$fields_array[$key]['structure'] = '
 					<input type = "text"
-						   class = "cwpmf-input cwpmf-input-email cwpmf-input-email-' . esc_attr( $email_field_count ) . '"
+						   id = "cwpmf-input-email-' . esc_attr( $email_field_count ) . '"
+						   class = "cwpmf-input cwpmf-input-email"
 						   name = "cwpmf-input-email-' . esc_attr( $email_field_count ) . '"
 						   placeholder = "' . $fields_array[$key]['placeholder'] . '"
 						   data-required = "' . $fields_array[$key]['is_required'] . '" />
@@ -83,7 +87,8 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 
 			case 'choice-message':
 				$fields_array[$key]['structure'] = '
-					<textarea class = "cwpmf-textarea cwpmf-input-message cwpmf-input-message-' . esc_attr( $textarea_field_count ) . '"
+					<textarea id = "cwpmf-input-message-' . esc_attr( $textarea_field_count ) . '"
+							  class = "cwpmf-textarea cwpmf-input-message"
 						      name = "cwpmf-input-message-' . esc_attr( $textarea_field_count ) . '"
 						      placeholder = "' . $fields_array[$key]['placeholder'] . '"
 						      data-required = "' . $fields_array[$key]['is_required'] . '"></textarea>

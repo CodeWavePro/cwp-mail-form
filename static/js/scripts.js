@@ -31,7 +31,7 @@ jQuery( function( $ ) {
 			isPhoneRequired = false,
 			isEmailRequired = false,
 			isMessageRequired = false;	// Are these fields required or not (not required by default here).
-		var iter, invalidFieldClassName;
+		var iter, invalidFieldId;
 
 		/**
 		 * Show more info about product.
@@ -44,16 +44,15 @@ jQuery( function( $ ) {
 				form = $( this );
 				emailTo = form.attr( 'data-to' );
 
-				// Check each label in form.
+				$( 'input, textarea', form ).removeClass( 'cwpmf-field-with-error' );	// Remove error class from fields.
 				$( '.cwpmf-input-error-msg', form ).text( '' );	// Remove all error text.
-
-				fieldsArray = new Array();
+				fieldsArray = new Array();	// Empty array for all important data.
 
 				if ( $( 'input', form ).hasClass( 'cwpmf-input-text' ) ) {
 					$( '.cwpmf-input-text' ).each( function( index, el ) {
 						fieldsArray.push( {
 							'type'		: 'text',
-							'class'		: $( this ).attr( 'class' ),
+							'id'		: $( this ).attr( 'id' ),
 							'required'	: $( this ).attr( 'data-required' ),
 							'value'		: $( this ).val()
 						} );
@@ -64,7 +63,7 @@ jQuery( function( $ ) {
 					$( '.cwpmf-input-name' ).each( function( index, el ) {
 						fieldsArray.push( {
 							'type'		: 'name',
-							'class'		: $( this ).attr( 'class' ),
+							'id'		: $( this ).attr( 'id' ),
 							'required'	: $( this ).attr( 'data-required' ),
 							'value'		: $( this ).val()
 						} );
@@ -75,7 +74,7 @@ jQuery( function( $ ) {
 					$( '.cwpmf-input-phone' ).each( function( index, el ) {
 						fieldsArray.push( {
 							'type'		: 'phone',
-							'class'		: $( this ).attr( 'class' ),
+							'id'		: $( this ).attr( 'id' ),
 							'required'	: $( this ).attr( 'data-required' ),
 							'value'		: $( this ).val()
 						} );
@@ -86,7 +85,7 @@ jQuery( function( $ ) {
 					$( '.cwpmf-input-email' ).each( function( index, el ) {
 						fieldsArray.push( {
 							'type'		: 'email',
-							'class'		: $( this ).attr( 'class' ),
+							'id'		: $( this ).attr( 'id' ),
 							'required'	: $( this ).attr( 'data-required' ),
 							'value'		: $( this ).val()
 						} );
@@ -97,7 +96,7 @@ jQuery( function( $ ) {
 					$( '.cwpmf-input-message' ).each( function( index, el ) {
 						fieldsArray.push( {
 							'type'		: 'message',
-							'class'		: $( this ).attr( 'class' ),
+							'id'		: $( this ).attr( 'id' ),
 							'required'	: $( this ).attr( 'data-required' ),
 							'value'		: $( this ).val()
 						} );
@@ -130,11 +129,13 @@ jQuery( function( $ ) {
 						case false: 	// If we have some errors.
 			    			console.log( data.data.message );	// Show errors in console.
 
-			    			if ( data.data.array ) {
-			    				for(iter = 0; iter < data.data.array.length; iter++ ) {
-			    					invalidFieldClassName = '.' + data.data.array[iter]['class'];
-			    					invalidFieldClassName = invalidFieldClassName.replace( / /g, '.' );
-			    					$( invalidFieldClassName, form ).closest( '.cwpmf-label' ).find( '.cwpmf-input-error-msg' ).text( data.data.array[iter]['message'] );
+			    			if ( data.data.array ) {	// If array of invalid fields is not empty.
+			    				for( iter = 0; iter < data.data.array.length; iter++ ) {
+			    					if ( data.data.array[iter]['message'] != '' ) {	// If current field has error.
+			    						invalidFieldId = '#' + data.data.array[iter]['id'];	// Make ID 'jQuery-like'.
+				    					$( invalidFieldId, form ).addClass( 'cwpmf-field-with-error' );	// Add error class to invalid field.
+				    					$( invalidFieldId, form ).closest( '.cwpmf-label' ).find( '.cwpmf-input-error-msg' ).text( data.data.array[iter]['message'] ); // Output error message for invalid field.
+			    					}
 			    				}
 			    			}
 			    			isActiveAjax = false;	// User can use ajax ahead.
