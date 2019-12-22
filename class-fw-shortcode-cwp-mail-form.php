@@ -306,7 +306,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 
 			/**
 			 * Validation results array - will be send to front-end:
-			 * - class name of the field that goes to validation;
+			 * - id of the field that goes to validation;
 			 * - field validation result;
 			 * - validation result message: error text if error, nothing if it's OK.
 			 */
@@ -341,10 +341,11 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 				]
 			);
 		}	else {
-			// E-mail format validation.
-			$mail_validate = filter_var( $email_to, FILTER_VALIDATE_EMAIL );
-			// If there are some errors -> send error message about it.
-			if ( !$mail_validate ) {
+			/**
+			 * E-mail format validation.
+			 * If there are some errors -> send error message about it.
+			 */
+			if ( !filter_var( $email_to, FILTER_VALIDATE_EMAIL ) ) {
 				wp_send_json_error(
 					[
 						'message' 	=> esc_html__( 'Почта для отправки неверного формата.', 'mebel-laim' )
