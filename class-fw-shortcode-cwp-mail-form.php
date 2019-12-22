@@ -157,6 +157,18 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 	 * Send User e-mail to website Administrator.
 	 */
     public function _cwpmf_send_email() {
+    	// Verify nonce from hidden field.
+    	if ( empty( $_POST ) ||
+    		 !wp_verify_nonce( $_POST['nonce'], '_cwpmf_send_email_nonce') ) {
+    		// Send error message if nonce not verified.
+			wp_send_json_error(
+				[
+					'message'	=> esc_html__( 'Данные переданы из неизвестного источника. Выход из функции.', 'mebel-laim' )
+				]
+			);
+		}
+
+		// E-mail where letter must be send to.
 		$email_to = $this->clean_value( $_POST['email_to'] );
 		// Empty array for results of all fields validation.
 		$post_fields_array = $_POST['fields_array'];

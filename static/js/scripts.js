@@ -23,15 +23,9 @@ jQuery( function( $ ) {
 	$( document ).ready( function() {
 		var form, ajaxData, emailTo;	// For e-mail form data sending.
 		var fieldsArray;	// Array for all form fields.
-		var isText = false, 
-			isPhone = false,
-			isEmail = false,
-			isMessage = false;	// Data-attribute if this fields are existing in form (not existing by default here).
-		var isFirstnameRequired = false,
-			isPhoneRequired = false,
-			isEmailRequired = false,
-			isMessageRequired = false;	// Are these fields required or not (not required by default here).
-		var iter, invalidFieldId;
+		var iter,
+			invalidFieldId,
+			nonce;
 
 		/**
 		 * Show more info about product.
@@ -43,6 +37,7 @@ jQuery( function( $ ) {
 				isActiveAjax = true;	// Ajax for other actions is blocked.
 				form = $( this );
 				emailTo = form.attr( 'data-to' );
+				nonce = $( '#cwpmf_nonce_field', form ).val();
 
 				$( 'input, textarea', form ).removeClass( 'cwpmf-field-with-error' );	// Remove error class from fields.
 				$( '.cwpmf-input-error-msg', form ).text( '' );	// Remove all error text.
@@ -106,6 +101,7 @@ jQuery( function( $ ) {
 				ajaxData = {
 					action		: '_cwpmf_send_email',
 					email_to	: emailTo,
+					nonce 		: nonce,
 					fields_array: fieldsArray
 				};
 

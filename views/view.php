@@ -118,6 +118,9 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 			</label>
 		<?php } ?>
 
+		<!-- Nonce field to verify AJAX response at server side. -->
+		<?php wp_nonce_field( '_cwpmf_send_email_nonce', 'cwpmf_nonce_field' ) ?>
+
 		<!-- Button to submit form. -->
 		<button class = "button cwpmf-button" title = "<?php printf( esc_attr__( '%s', 'mebel-laim' ), $button_text ) ?>" form = "cwpmf" type = "submit">
 			<?php printf( esc_html__( '%s', 'mebel-laim' ), $button_text ) ?>
