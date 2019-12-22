@@ -133,6 +133,118 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		return true;
 	}
 
+	/**
+	 * Creating e-mail HTML-structure.
+	 */
+	private function cwpmf_email_letter_structure( $user_name, $user_phone, $user_email, $user_text, $user_message ) {
+		// Logotype from customizer theme settings.
+		$header_logo = ( fw_get_db_customizer_option( 'header_logo' ) ) ? fw_get_db_customizer_option( 'header_logo' )['url'] : get_template_directory_uri() . 'inc/img/no-img.png';
+
+		$message = '
+			<!DOCTYPE html>
+			<html>
+			  <head>
+			    <meta charset = "utf-8" />
+			    <title>Форма обратной связи на сайте ' . $_SERVER['HTTP_HOST'] . '</title>
+			    <style>
+				    a {
+				    	color: #58c800 !important
+				    }
+
+			    	.cwpmf-letter-header {
+			    		padding: 30px
+			    	}
+
+			    	h1,
+			    	h2 {
+			    		font-family: Calibri
+			    	}
+
+			    	h1 {
+			    		text-transform: uppercase;
+			    		letter-spacing: 1px
+			    	}
+
+			    	.cwpmf-letter-header {
+			    		position: relative;
+			    		background-color: #efefef;
+			    		margin: 0 auto;
+			    		margin-bottom: 50px;
+			    		max-width: 1170px
+			    	}
+
+			    	.cwpmf-letter-header__logo {
+			    		height: 100px;
+			    		width: auto
+			    	}
+
+			    	.cwpmf-letter-header__title,
+			    	.cwpmf-letter-header__posttitle,
+			    	.cwpmf-letter-content,
+			    	.cwpmf-letter-footer__text {
+			    		text-align: center
+			    	}
+
+			    	.cwpmf-letter-content {
+			    		position: relative;
+			    		padding: 0 30px;
+			    		margin: 0 auto;
+			    		max-width: 1170px
+			    	}
+
+			    	.cwpmf-letter-content-paragraph {
+			    		color: #323232 !important;
+			    		font-size: 18px !important;
+			    		font-family: Calibri
+			    	}
+
+			    	.cwpmf-letter-footer {
+			    		background-color: #323232;
+						padding: 15px 30px;
+						margin-top: 50px;
+						margin: 0 auto;
+			    		max-width: 1170px
+			    	}
+
+			    	.cwpmf-letter-footer__text {
+			    		color: #f9f9f9;
+			    		font-size: 14px !important;
+			    		font-family: Calibri
+			    	}
+
+			    	.cwpmf-letter-footer__link {
+			    		color: #ff3e3e !important
+			    	}
+			    </style>
+			  </head>
+
+			  <body>
+			    <header class = "cwpmf-letter-header">
+			    	<h1 class = "cwpmf-letter-header__title">
+			    		Здравствуйте!
+			    	</h1>
+			    	<h2 class = "cwpmf-letter-header__posttitle">
+			    		Вы получили это сообщение с формы обратной связи на сайте ' . $_SERVER['HTTP_HOST'] . '
+			    	</h2>
+			    </header>
+
+			    <div class = "cwpmf-letter-content">
+			    	<p class = "cwpmf-letter-content-paragraph">
+			    		' . $user_name . '<br />' . $user_phone . '<br />' . $user_email . '<br />' . $user_text . '<br />' . $user_message . '
+			    	</p>
+			    </div>
+
+			    <footer class = "cwpmf-letter-footer">
+			    	<p class = "cwpmf-letter-footer__text">
+			    		Сайт разработан <a class = "cwpmf-letter-footer__link" href = "https://codewave.pro/" target = "_blank">CodeWavePro</a>
+			    	</p>
+			    </footer>
+			  </body>
+			</html>
+		';
+		return $message;
+	}
+
     /**
      * Register Ajax functions.
      */
@@ -288,19 +400,33 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 		$user_email = substr( $user_email, 0, -1 );
 		$user_message = substr( $user_message, 0, -1 );
 
-		$user_name = !empty( $user_name ) ? sprintf( esc_html__( 'Отправитель: %s.', 'mebel-laim' ), $user_name ) . PHP_EOL : '';
-		$user_phone = !empty( $user_phone ) ? sprintf( esc_html__( 'Телефон отправителя: %s.', 'mebel-laim' ), $user_phone ) . PHP_EOL : '';
-		$user_email = !empty( $user_email ) ? sprintf( esc_html__( 'E-mail отправителя: %s.', 'mebel-laim' ), $user_email ) . PHP_EOL : '';
-		$user_text = !empty( $user_text ) ? sprintf( esc_html__( 'Содержание текстовых полей формы: %s.', 'mebel-laim' ), $user_text ) . PHP_EOL : '';
-		$user_message = !empty( $user_message ) ? sprintf( esc_html__( 'Сообщение отправителя: %s', 'mebel-laim' ), $user_message ) : '';
+		$user_name = !empty( $user_name ) ? sprintf( '<b>Отправитель:</b> %s.', $user_name ) : '';
+		$user_phone = !empty( $user_phone ) ? sprintf( '<b>Телефон отправителя:</b> %s.', $user_phone ) : '';
+		$user_email = !empty( $user_email ) ? sprintf( '<b>E-mail отправителя:</b> %s.', $user_email ) : '';
+		$user_text = !empty( $user_text ) ? sprintf( '<b>Содержание текстовых полей формы:</b> %s.', $user_text ) : '';
+		$user_message = !empty( $user_message ) ? sprintf( '<b>Сообщение отправителя:</b> %s', $user_message ) : '';
 
-		// E-mail message text:
-		$message_to_send = esc_html__( 'Здравствуйте!', 'mebel-laim' ) . "\n";
-		$message_to_send .= esc_html__( 'Вам прислали сообщение с формы обратной связи.', 'mebel-laim' ) . "\n\n";
-		$message_to_send .= $user_name . $user_phone . $user_email . $user_text . $user_message;
+		$message_to_send = $this->cwpmf_email_letter_structure( $user_name, $user_phone, $user_email, $user_text, $user_message );
 
-		$headers = "From: \"" . get_bloginfo( 'name' ) . "\"<no-reply>\r\nContent-type: text/plain; charset=utf-8 \r\n";
-		$send = mail( $email_to, __( 'Форма обратной связи', 'mebel-laim'), $message_to_send, $headers );
+		// Add website name to 'From' field in letter headers.
+		add_filter( 'wp_mail_from_name', 'cwpmf_wp_mail_from_name' );
+		function cwpmf_wp_mail_from_name( $email_from ){
+			return htmlspecialchars_decode( get_bloginfo( 'name' ) );
+		}
+		// Add website no-reply e-mail to 'From' field in letter headers.
+		add_filter( 'wp_mail_from', 'cwpmf_wp_mail_from' );
+		function cwpmf_wp_mail_from( $email_address ){
+			return 'no-reply@' . $_SERVER['HTTP_HOST'];
+		}
+		// Set letter content type to html.
+		add_filter( 'wp_mail_content_type', 'cwpmf_set_html_content_type' );
+		function cwpmf_set_html_content_type( $content_type ) {
+			return 'text/html';
+		}
+		// Sending letter.
+		$send = wp_mail( $email_to, esc_html__( 'Форма обратной связи', 'mebel-laim'), $message_to_send );
+		// Remove content type filter to avoid conflicts.
+		remove_filter( 'wp_mail_content_type', 'cwpmf_set_html_content_type' );
 
 		if ( $send ) {	// If e-mail send is OK.
 			wp_send_json_success(
