@@ -299,7 +299,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 				 empty( $fields_array[$key]['required'] ) ) {
 				wp_send_json_error(
 					[
-						'message'	=> sprintf( esc_html__( 'Переданы некорректные данные о поле с классом %s.', 'mebel-laim' ), $fields_array[$key]['class'] )
+						'message'	=> sprintf( esc_html__( 'Переданы некорректные данные о поле с id %s.', 'mebel-laim' ), $fields_array[$key]['id'] )
 					]
 				);
 			}
@@ -312,7 +312,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 			 */
 			$field_check_result[$key]['id'] = $fields_array[$key]['id'];
 			$field_check_result[$key]['result'] = $this->check_field_data( $fields_array[$key]['required'], $fields_array[$key]['value'], $fields_array[$key]['type'] );
-			$field_check_result[$key]['message'] = !$field_check_result[$key]['result'] ? esc_html__( 'Данные отсутствуют или некорректы.', 'mebel-laim' ) : '';
+			$field_check_result[$key]['message'] = !$field_check_result[$key]['result'] ? esc_html__( 'Данные отсутствуют или некорректны.', 'mebel-laim' ) : '';
 
 			// If at least one field has error after validation.
 			if ( !$field_check_result[$key]['result'] ) {
