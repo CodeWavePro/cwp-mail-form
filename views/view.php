@@ -104,7 +104,7 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 ?>
 
 <!-- Form to send e-mail. -->
-<form id = "cwpmf" class = "cwpmf" method = "POST" data-to = "<?php echo esc_attr( $email_to ) ?>">
+<form id = "cwpmf" class = "cwpmf" method = "POST" data-to = "<?php echo esc_attr( $email_to ) ?>" data-letter = "<?php echo esc_attr( $letter_settings ) ?>">
 	<!-- All form fields. -->
 	<fieldset class = "cwpmf-fieldset">
 		<!-- Form title text. -->

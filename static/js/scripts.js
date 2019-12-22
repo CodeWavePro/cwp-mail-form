@@ -123,9 +123,9 @@ jQuery( function( $ ) {
 			    			break;
 
 						case false: 	// If we have some errors.
-			    			console.log( data.data.message );	// Show errors in console.
-
 			    			if ( data.data.array ) {	// If array of invalid fields is not empty.
+			    				console.log( data.data.message );	// Show errors in console.
+
 			    				for( iter = 0; iter < data.data.array.length; iter++ ) {
 			    					if ( data.data.array[iter]['message'] != '' ) {	// If current field has error.
 			    						invalidFieldId = '#' + data.data.array[iter]['id'];	// Make ID 'jQuery-like'.
@@ -133,12 +133,32 @@ jQuery( function( $ ) {
 				    					$( invalidFieldId, form ).closest( '.cwpmf-label' ).find( '.cwpmf-input-error-msg' ).text( data.data.array[iter]['message'] ); // Output error message for invalid field.
 			    					}
 			    				}
+			    			}	else {	// If array is not in response show specific error message in popup.
+			    				$( '.cwpmf-popup-message' ).html( data.data.message );	// Put success message to its wrapper in popup.
+								$( '.cwpmf-popup' ).css( 'display', 'block' );	// Show wrapper for success message. 
+								// 1ms timeout to show animation after it. Needed because of "display none - display block" changing.
+								setTimeout(
+									function() {
+										$( '.cwpmf-popup' ).css( 'z-index', '51' );
+										$( '.cwpmf-popup' ).removeClass( 'fadeOut' ).addClass( 'fadeIn' );	// Animate wrapper for success message.
+										$( '.cwpmf-popup-inner' ).removeClass( 'bounceOutUp' ).addClass( 'jackInTheBox' );	// Animate popup inner for success message.
+									}, 1
+								);
 			    			}
 			    			isActiveAjax = false;	// User can use ajax ahead.
 			    			break;
 
 			    		default: 	// Default variant.
-			    			console.log( 'Unknown error!' );	// Show message of unknown error in console.
+			    			$( '.cwpmf-popup-message' ).html( data.data.message );	// Put success message to its wrapper in popup.
+							$( '.cwpmf-popup' ).css( 'display', 'block' );	// Show wrapper for success message. 
+							// 1ms timeout to show animation after it. Needed because of "display none - display block" changing.
+							setTimeout(
+								function() {
+									$( '.cwpmf-popup' ).css( 'z-index', '51' );
+									$( '.cwpmf-popup' ).removeClass( 'fadeOut' ).addClass( 'fadeIn' );	// Animate wrapper for success message.
+									$( '.cwpmf-popup-inner' ).removeClass( 'bounceOutUp' ).addClass( 'jackInTheBox' );	// Animate popup inner for success message.
+								}, 1
+							);
 			    			isActiveAjax = false;	// User can use ajax ahead.
 			    			break;
 					}

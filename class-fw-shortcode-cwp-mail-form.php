@@ -137,9 +137,6 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 	 * Creating e-mail HTML-structure.
 	 */
 	private function cwpmf_email_letter_structure( $user_name, $user_phone, $user_email, $user_text, $user_message ) {
-		// Logotype from customizer theme settings.
-		$header_logo = ( fw_get_db_customizer_option( 'header_logo' ) ) ? fw_get_db_customizer_option( 'header_logo' )['url'] : get_template_directory_uri() . 'inc/img/no-img.png';
-
 		$message = '
 			<!DOCTYPE html>
 			<html>
@@ -167,7 +164,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
 
 			    	.cwpmf-letter-header {
 			    		position: relative;
-			    		background-color: #efefef;
+			    		background-color: #f9f9f9;
 			    		margin: 0 auto;
 			    		margin-bottom: 50px;
 			    		max-width: 1170px
@@ -275,7 +272,7 @@ class FW_Shortcode_CWP_Mail_Form extends FW_Shortcode {
     		// Send error message if nonce not verified.
 			wp_send_json_error(
 				[
-					'message'	=> esc_html__( 'Данные переданы из неизвестного источника. Выход из функции.', 'mebel-laim' )
+					'message'	=> 'Ошибка отправки.<br /><br />Возможные причины:<br />1) неизвестный источник данных;<br />2) повторная отправка уже использованных настроек формы.<br /><br />Попробуйте обновить страницу и повторить отправку.'
 				]
 			);
 		}

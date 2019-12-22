@@ -140,7 +140,7 @@ $error: #ff3e3e;
     margin-left: -250px;
     background-color: $white;
     box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.15);
-    padding: 75px 35px 50px;
+    padding: 75px 35px 100px;
     text-align: center
 }
 
@@ -187,6 +187,7 @@ $error: #ff3e3e;
 // Message block in popup.
 .cwpmf-popup-message {
     font-size: 21px;
+    line-height: 27px;
     font-family: 'Fira Sans'
 }
 
@@ -196,4 +197,17 @@ $error: #ff3e3e;
     bottom: 35px;
     left: 0;
     width: 100%
+}
+
+@media (max-width: 767px) {
+    .cwpmf-popup {
+        overflow-y: scroll
+    }
+
+    .cwpmf-popup-inner {
+        width: 100%;
+        margin: 0;
+        left: 0;
+        top: 30px
+    }
 }
