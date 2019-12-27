@@ -3,8 +3,6 @@ if ( !defined( 'FW' ) ) {
 	die( 'Forbidden' );
 }
 
-// Unyson Icons v2 option type frontend enqueue.
-fw()->backend->option_type('icon-v2')->packs_loader->enqueue_frontend_css();
 // E-mail address to send letter.
 $email_to = ( isset( $atts['send_to'] ) && $atts['send_to'] ) ? $atts['send_to'] : '';
 // Form title.
