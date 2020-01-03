@@ -13,6 +13,12 @@ $options = [
                 'desc'  => esc_html__( 'Please enter e-mail for receiving messages', 'mebel-laim' )
             ],
 
+            'form_margin_top'    => [
+                'type'  => 'text',
+                'label' => esc_html__( 'Margin Top (px)', 'mebel-laim' ),
+                'desc'  => esc_html__( 'Please enter form margin top value in pixels', 'mebel-laim' )
+            ],
+
             'legend'    => [
                 'type'  => 'text',
                 'label' => esc_html__( 'Form Title', 'mebel-laim' ),

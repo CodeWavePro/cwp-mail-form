@@ -3,6 +3,8 @@ if ( !defined( 'FW' ) ) {
 	die( 'Forbidden' );
 }
 
+// Form margin top.
+$form_margin_top = ( isset( $atts['form_margin_top'] ) && $atts['form_margin_top'] ) ? $atts['form_margin_top'] . 'px' : '0';
 // E-mail address to send letter.
 $email_to = ( isset( $atts['send_to'] ) && $atts['send_to'] ) ? $atts['send_to'] : '';
 // Form title.
@@ -102,7 +104,11 @@ if ( isset( $atts['fields'] ) && $atts['fields'] ) {
 ?>
 
 <!-- Form to send e-mail. -->
-<form id = "cwpmf" class = "cwpmf" method = "POST" data-to = "<?php echo esc_attr( $email_to ) ?>" data-letter = "<?php echo esc_attr( $letter_settings ) ?>">
+<form id = "cwpmf"
+	  class = "cwpmf"
+	  method = "POST"
+	  data-to = "<?php echo esc_attr( $email_to ) ?>"
+	  style = "margin-top: <?php echo esc_attr( $form_margin_top ) ?>">
 	<!-- All form fields. -->
 	<fieldset class = "cwpmf-fieldset">
 		<!-- Form title text. -->
